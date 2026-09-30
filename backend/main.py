@@ -1,11 +1,26 @@
 from fastapi import FastAPI
-from backend.database.mongodb import check_database_connection
+
+from backend.database.mongodb import (
+    check_database_connection
+)
+
+from backend.routes.auth import (
+    router as auth_router
+)
+
 
 app = FastAPI(
     title="SeaGuard AI API",
-    description="Agentic Maritime Emergency, Security & Incident Management Assistant",
+    description=(
+        "Agentic Maritime Emergency, Security "
+        "& Incident Management Assistant"
+    ),
     version="1.0.0"
 )
+
+
+app.include_router(auth_router)
+
 
 @app.get("/")
 def root():
@@ -14,12 +29,22 @@ def root():
         "status": "running"
     }
 
+
 @app.get("/health")
-def health_check():
+def health():
+
     connected = check_database_connection()
 
     return {
-        "status": "healthy" if connected else "degraded",
+        "status": (
+            "healthy"
+            if connected
+            else "degraded"
+        ),
         "service": "SeaGuard AI Backend",
-        "database": "connected" if connected else "disconnected"
+        "database": (
+            "connected"
+            if connected
+            else "disconnected"
+        )
     }
