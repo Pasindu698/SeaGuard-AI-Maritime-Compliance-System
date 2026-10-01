@@ -1,0 +1,55 @@
+TITLE: Shipboard Collision Emergency Response
+
+CATEGORY:
+Emergency Procedure
+
+INCIDENT TYPE:
+collision
+
+PURPOSE:
+
+Provide a structured response sequence for a collision emergency
+for use by the SeaGuard AI prototype.
+
+RESPONSE ACTIONS:
+
+1. Raise the appropriate emergency alarm.
+
+2. Notify the bridge and responsible officers.
+
+3. Determine whether any person has been injured or is missing.
+
+4. Assess the location and apparent extent of vessel damage.
+
+5. Check affected areas for water ingress where safe to do so.
+
+6. Monitor the vessel's condition and stability.
+
+7. Identify any immediate fire, pollution or other secondary hazards.
+
+8. Follow the vessel's emergency and damage-control procedures.
+
+9. Maintain communication between relevant emergency response teams
+and the bridge.
+
+10. Record relevant information about the collision and actions taken.
+
+RELATED KNOWLEDGE:
+
+Ship Safety Management System
+Shipboard Emergency Plan
+Marine Casualty Investigation and Reporting
+
+KEYWORDS:
+
+collision
+collided
+impact
+ship collision
+vessel damage
+hull damage
+water ingress
+flooding
+stability
+injury
+emergency

@@ -1,0 +1,84 @@
+TITLE: SOLAS Chapter II-2 - Fire Protection, Fire Detection and Fire Extinction
+
+SOURCE ORGANIZATION: International Maritime Organization (IMO)
+
+SOURCE:
+International Convention for the Safety of Life at Sea (SOLAS), 1974
+
+REFERENCE:
+SOLAS Chapter II-2
+
+CATEGORY:
+Fire Safety
+
+SUMMARY:
+
+SOLAS Chapter II-2 contains requirements concerning fire protection,
+fire detection and fire extinction on ships.
+
+The chapter follows a fire safety approach covering prevention,
+detection, containment, fire-fighting and safe escape.
+
+KEY REQUIREMENTS AND AREAS:
+
+1. Prevention of ignition of combustible materials and flammable liquids.
+
+2. Limitation of the growth potential of a fire within ship spaces.
+
+3. Reduction of hazards caused by smoke and toxic products generated
+during a fire.
+
+4. Detection of fire in the space where it originates and provision
+of alarms to support safe escape and fire-fighting activities.
+
+5. Control of the spread of smoke.
+
+6. Containment of fire within the space of origin.
+
+7. Suppression and extinguishing of fire.
+
+8. Protection of the structural integrity of the ship against
+heat-related deterioration.
+
+9. Notification of crew and passengers when a fire occurs.
+
+10. Provision of suitable means of escape.
+
+11. Maintenance and monitoring of fire safety systems and equipment.
+
+RELEVANT REGULATIONS:
+
+Regulation 4 - Probability of ignition
+Regulation 5 - Fire growth potential
+Regulation 6 - Smoke generation potential and toxicity
+Regulation 7 - Detection and alarm
+Regulation 8 - Control of smoke spread
+Regulation 9 - Containment of fire
+Regulation 10 - Fire fighting
+Regulation 11 - Structural integrity
+Regulation 12 - Notification of crew and passengers
+Regulation 13 - Means of escape
+Regulation 14 - Operational readiness and maintenance
+
+KEYWORDS:
+
+fire
+smoke
+engine room fire
+fire alarm
+fire detection
+fire fighting
+fire extinction
+fire suppression
+escape
+evacuation
+combustible material
+flammable liquid
+SOLAS
+SOLAS Chapter II-2
+
+SOURCE NOTE:
+
+This knowledge file is a structured summary prepared for the SeaGuard AI
+project using information published by the International Maritime
+Organization (IMO). It is not a replacement for the official SOLAS text.

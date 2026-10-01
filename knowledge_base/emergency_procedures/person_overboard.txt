@@ -1,0 +1,54 @@
+TITLE: Person Overboard Emergency Response
+
+CATEGORY:
+Emergency Procedure
+
+INCIDENT TYPE:
+person_overboard
+
+PURPOSE:
+
+Provide a structured response sequence for a person-overboard emergency
+for use by the SeaGuard AI prototype.
+
+RESPONSE ACTIONS:
+
+1. Raise the person-overboard alarm and immediately alert the bridge.
+
+2. Maintain visual contact with the person when possible.
+
+3. Follow the vessel's person-overboard manoeuvring and emergency
+procedures.
+
+4. Prepare appropriate life-saving and recovery equipment.
+
+5. Follow the vessel's procedures for deploying rescue equipment
+and rescue personnel.
+
+6. Recover the person using the vessel's approved recovery arrangements.
+
+7. Provide appropriate first-aid or medical assistance following
+recovery when required.
+
+8. Account for personnel and communicate the outcome to the bridge.
+
+9. Record relevant information about the incident and response.
+
+RELATED KNOWLEDGE:
+
+SOLAS Chapter III
+International Life-Saving Appliance Code
+Ship Safety Management System
+
+KEYWORDS:
+
+person overboard
+man overboard
+crew overboard
+MOB
+rescue
+recovery
+lifebuoy
+rescue boat
+life-saving
+emergency

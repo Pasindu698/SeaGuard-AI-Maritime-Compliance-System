@@ -10,6 +10,9 @@ from backend.routes.auth import (
 from backend.routes.documents import (
     router as document_router
 )
+from backend.routes.compliance import (
+    router as compliance_router
+)
 
 app = FastAPI(
     title="SeaGuard AI API",
@@ -23,6 +26,7 @@ app = FastAPI(
 
 app.include_router(auth_router)
 app.include_router(document_router)
+app.include_router(compliance_router)
 
 
 @app.get("/")
