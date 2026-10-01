@@ -7,7 +7,9 @@ from backend.database.mongodb import (
 from backend.routes.auth import (
     router as auth_router
 )
-
+from backend.routes.documents import (
+    router as document_router
+)
 
 app = FastAPI(
     title="SeaGuard AI API",
@@ -20,6 +22,7 @@ app = FastAPI(
 
 
 app.include_router(auth_router)
+app.include_router(document_router)
 
 
 @app.get("/")
