@@ -6,13 +6,8 @@ from fastapi import (
     status
 )
 
-from backend.models.document import (
-    DocumentQueryRequest
-)
-
-from backend.agents.document_query_agent import (
-    document_query_agent
-)
+from backend.models.document import DocumentQueryRequest
+from backend.agents.document_query_agent import document_query_agent
 
 
 router = APIRouter(
@@ -28,25 +23,29 @@ router = APIRouter(
 async def upload_document(
     file: UploadFile = File(...)
 ):
-
     try:
+        return await document_query_agent.process_document(file)
 
-        return await document_query_agent.process_document(
-            file
-        )
+    except HTTPException:
+        # Keep errors from Security Agent file validation
+        raise
 
     except ValueError as error:
-
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=str(error)
         )
 
     except RuntimeError as error:
-
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             detail=str(error)
+        )
+
+    except Exception:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Unable to process the uploaded document."
         )
 
 
@@ -54,16 +53,19 @@ async def upload_document(
 def query_documents(
     request: DocumentQueryRequest
 ):
-
     try:
-
         return document_query_agent.process_query(
             request.query
         )
 
     except RuntimeError as error:
-
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             detail=str(error)
+        )
+
+    except Exception:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Unable to process the document query."
         )
