@@ -11,7 +11,7 @@ class DocumentQueryAgent:
     async def process_document(self, file: UploadFile):
 
         # Validate PDF and extract information
-        processed_data = await document_service.process_pdf(file)
+        processed_data = await document_service.process_document(file)
 
         # Save processed document in MongoDB
         document_id = document_service.save_document(
@@ -19,13 +19,14 @@ class DocumentQueryAgent:
             text=processed_data["text"],
             summary=processed_data["summary"],
             incident_type=processed_data["incident_type"],
+            document_type=processed_data["document_type"],
             vessel_name=processed_data["vessel_name"]
         )
 
         return {
             "document_id": document_id,
             "filename": file.filename or "unknown.pdf",
-            "document_type": "PDF",
+            "document_type": processed_data["document_type"],
             "text_length": len(processed_data["text"]),
             "summary": processed_data["summary"],
             "incident_type": processed_data["incident_type"],
