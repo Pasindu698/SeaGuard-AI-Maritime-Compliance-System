@@ -1,0 +1,94 @@
+TITLE: SOLAS Chapter III - Life-Saving Appliances and Arrangements
+
+SOURCE ORGANIZATION: International Maritime Organization (IMO)
+
+SOURCE:
+International Convention for the Safety of Life at Sea (SOLAS), 1974
+
+REFERENCE:
+SOLAS Chapter III
+International Life-Saving Appliance (LSA) Code
+
+CATEGORY:
+Life-Saving and Rescue
+
+SUMMARY:
+
+SOLAS Chapter III establishes requirements for life-saving appliances
+and arrangements carried on ships.
+
+The International Life-Saving Appliance (LSA) Code provides detailed
+technical requirements for life-saving appliances.
+
+IMPORTANT AREAS:
+
+1. Communications used during emergencies.
+
+2. Personal life-saving appliances.
+
+3. Muster lists and emergency instructions.
+
+4. Operating instructions for life-saving equipment.
+
+5. Survival craft muster and embarkation arrangements.
+
+6. Stowage of survival craft.
+
+7. Stowage of rescue boats.
+
+8. Launching and recovery arrangements.
+
+9. Recovery of persons from the water.
+
+10. Emergency training and drills.
+
+11. Operational readiness, maintenance and inspection of life-saving
+equipment.
+
+EXAMPLES OF LIFE-SAVING APPLIANCES:
+
+- Lifeboats
+- Liferafts
+- Rescue boats
+- Lifebuoys
+- Lifejackets
+- Immersion suits
+- Visual distress signals
+- Marine evacuation systems
+- General alarm systems
+
+RELEVANT REGULATIONS:
+
+Regulation 6 - Communications
+Regulation 7 - Personal life-saving appliances
+Regulation 8 - Muster list and emergency instructions
+Regulation 17 - Rescue boat embarkation, launching and recovery
+Regulation 17-1 - Recovery of persons from the water
+Regulation 19 - Emergency training and drills
+Regulation 20 - Operational readiness, maintenance and inspections
+Regulation 34 - Life-saving appliances and arrangements
+Regulation 37 - Muster list and emergency instructions
+
+KEYWORDS:
+
+person overboard
+man overboard
+crew overboard
+rescue
+lifeboat
+liferaft
+rescue boat
+lifebuoy
+lifejacket
+immersion suit
+recovery
+emergency drill
+SOLAS Chapter III
+LSA Code
+
+SOURCE NOTE:
+
+This knowledge file is a structured summary prepared for the SeaGuard AI
+project using information published by the International Maritime
+Organization (IMO). It is not a replacement for the official SOLAS or
+LSA Code text.

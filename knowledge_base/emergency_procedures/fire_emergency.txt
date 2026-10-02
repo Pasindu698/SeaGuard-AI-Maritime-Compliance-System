@@ -1,0 +1,58 @@
+TITLE: Shipboard Fire Emergency Response
+
+CATEGORY:
+Emergency Procedure
+
+INCIDENT TYPE:
+fire
+
+PURPOSE:
+
+Provide a structured response sequence for a shipboard fire emergency
+for use by the SeaGuard AI prototype.
+
+RESPONSE ACTIONS:
+
+1. Raise the emergency alarm immediately.
+
+2. Notify the bridge or responsible officer.
+
+3. Identify the location and nature of the fire when it is safe to do so.
+
+4. Warn personnel in the affected area.
+
+5. Follow the vessel's fire emergency plan and muster instructions.
+
+6. Isolate the affected area where appropriate and safe.
+
+7. Use appropriate fire-fighting equipment in accordance with the
+ship's procedures.
+
+8. Maintain safe escape routes for personnel.
+
+9. Account for crew and other persons according to the vessel's
+emergency procedures.
+
+10. Monitor the situation and communicate changes to the bridge or
+responsible officer.
+
+11. Record relevant information about the incident and response actions.
+
+RELATED KNOWLEDGE:
+
+SOLAS Chapter II-2
+Ship Safety Management System
+Shipboard Emergency Plan
+
+KEYWORDS:
+
+fire
+engine room fire
+smoke
+burning
+fire alarm
+fire fighting
+fire suppression
+evacuation
+muster
+emergency

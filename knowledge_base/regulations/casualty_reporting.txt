@@ -1,0 +1,66 @@
+TITLE: Marine Casualty Investigation and Reporting
+
+SOURCE ORGANIZATION: International Maritime Organization (IMO)
+
+REFERENCES:
+
+SOLAS Regulation I/21
+SOLAS Regulation XI-1/6
+Resolution MSC.255(84) - Casualty Investigation Code
+
+CATEGORY:
+Casualty Investigation and Reporting
+
+SUMMARY:
+
+IMO instruments establish requirements relating to the investigation
+and reporting of marine casualties and marine incidents.
+
+SOLAS Regulation I/21 addresses casualty investigations and the
+provision of relevant information concerning investigation findings.
+
+SOLAS Regulation XI-1/6 provides additional requirements concerning
+the investigation of marine casualties and incidents and links those
+investigations with the Casualty Investigation Code.
+
+The Casualty Investigation Code was adopted through IMO Resolution
+MSC.255(84).
+
+IMPORTANT AREAS:
+
+1. Marine casualties and incidents may require safety investigation.
+
+2. Relevant findings from investigations are reported in accordance
+with applicable IMO requirements.
+
+3. The Casualty Investigation Code establishes international standards
+and recommended practices for marine safety investigations.
+
+4. Investigation information can support identification of contributing
+factors and prevention of similar casualties.
+
+5. Reporting of marine casualties and incidents to IMO is carried out
+through the applicable reporting framework.
+
+KEYWORDS:
+
+marine casualty
+marine incident
+incident report
+casualty investigation
+safety investigation
+reporting
+investigation report
+very serious casualty
+SOLAS I/21
+SOLAS XI-1/6
+MSC.255(84)
+Casualty Investigation Code
+GISIS
+
+SOURCE NOTE:
+
+This knowledge file is a structured summary prepared for the SeaGuard AI
+project using information published by the International Maritime
+Organization (IMO). The official instruments should be consulted for
+authoritative requirements.
