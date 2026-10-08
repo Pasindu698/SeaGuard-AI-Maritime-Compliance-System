@@ -1,3 +1,5 @@
+import re
+
 from typing import Any, Dict, List, Optional
 
 from backend.services.retrieval_service import retrieval_service
@@ -108,6 +110,53 @@ class HybridRetrievalService:
         "msc.255(84).pdf",
         "imo_casualty_investigation.pdf"
     }
+
+    @staticmethod
+    def _content_quality_adjustment(content: str) -> float:
+        """
+        Prefer actionable content over metadata-only chunks.
+        Conservative heuristic; not a compliance assessment.
+        """
+        text = content.strip()
+        lower = text.lower()
+
+        if not text:
+            return -0.30
+
+        action_patterns = (
+            r"\braise (?:the |an? )?(?:emergency |person-overboard )?alarm\b",
+            r"\bnotify (?:the )?(?:bridge|officer|crew)\b",
+            r"\bmaintain visual contact\b",
+            r"\bcheck affected areas\b",
+            r"\bmonitor (?:the )?(?:vessel|situation)\b",
+            r"\bfollow (?:the )?(?:vessel|ship)\b",
+            r"\brecover the person\b",
+            r"\bprepare (?:appropriate )?(?:life-saving|rescue)\b",
+        )
+
+        has_actions = any(
+            re.search(pattern, lower)
+            for pattern in action_patterns
+        )
+
+        metadata_markers = (
+            "keywords:",
+            "related knowledge:",
+            "source note:",
+        )
+
+        has_metadata = any(
+            marker in lower
+            for marker in metadata_markers
+        )
+
+        if has_actions:
+            return 0.12
+
+        if has_metadata and len(text.split()) < 45:
+            return -0.25
+
+        return 0.0
 
     # -------------------------------------------------
     # HYBRID SEARCH
@@ -278,6 +327,19 @@ class HybridRetrievalService:
             investigation_penalty = 0.0
             conflict_penalty = 0.0
 
+
+            # -----------------------------------------
+            # SECURITY-SPECIFIC INVESTIGATION PENALTY
+            # -----------------------------------------
+
+            if detected_incident == "security":
+                if (
+                    result["filename"].lower()
+                    in self.INVESTIGATION_SOURCE_HINTS
+                ):
+                    investigation_penalty = 0.35
+
+
             # -----------------------------------------
             # KEYWORD COMPONENT
             # -----------------------------------------
@@ -384,8 +446,34 @@ class HybridRetrievalService:
                     investigation_penalty = 0.30
 
             # -----------------------------------------
+            # EMERGENCY PROCEDURE PRIORITY
+            # -----------------------------------------
+
+            procedure_priority_bonus = 0.0
+
+            if operational_intent and detected_incident:
+
+                emergency_files = self.INCIDENT_FILE_MARKERS.get(
+                    detected_incident,
+                    set()
+                )
+
+                if filename_lower in emergency_files:
+
+                    content_lower = result["content"].lower()
+
+                    # Prefer chunks containing actual
+                    # emergency response instructions.
+                    if "response actions:" in content_lower:
+                        procedure_priority_bonus = 0.15
+
+            # -----------------------------------------
             # FINAL HYBRID SCORE
             # -----------------------------------------
+
+            content_adjustment = self._content_quality_adjustment(
+                result["content"]
+            )
 
             hybrid_score = (
                 keyword_component
@@ -393,6 +481,8 @@ class HybridRetrievalService:
                 + agreement_bonus
                 + incident_bonus
                 + operational_bonus
+                + content_adjustment
+                + procedure_priority_bonus
                 - investigation_penalty
                 - conflict_penalty
             )
@@ -471,6 +561,20 @@ class HybridRetrievalService:
             # Do not return strongly penalized results.
             if result["hybrid_score"] <= 0:
                 continue
+
+
+            # -----------------------------------------
+            # RELEVANCE FILTERING
+            # -----------------------------------------
+
+            minimum_score = 0.12
+
+            if detected_incident == "security":
+                minimum_score = 0.20
+
+            if result["hybrid_score"] < minimum_score:
+                continue
+
 
             # -----------------------------------------
             # OPERATIONAL QUERY FILTER

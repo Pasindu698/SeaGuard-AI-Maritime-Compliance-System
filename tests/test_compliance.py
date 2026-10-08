@@ -35,7 +35,7 @@ for reference in result["references"]:
     print(
         f"- {reference['filename']} "
         f"({reference['file_type']}) "
-        f"Score: {reference['score']}"
+        f"Score: {reference['hybrid_score']}"
     )
 
 print("\nDisclaimer:")

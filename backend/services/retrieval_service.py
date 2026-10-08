@@ -150,48 +150,93 @@ class RetrievalService:
     # CHUNK DOCUMENT TEXT
     # -------------------------------------------------
 
+
     def chunk_text(
         self,
         text: str,
         chunk_size: int = 1000,
         overlap: int = 150
     ) -> List[str]:
+        """
+        Split document text into word-safe overlapping chunks.
 
-        cleaned_text = " ".join(
-            text.split()
-        )
+        - Avoid splitting words in the middle.
+        - Preserve useful context between chunks.
+        - Handle empty text safely.
+        - Prevent infinite loops.
+        """
+
+        cleaned_text = " ".join(text.split())
 
         if not cleaned_text:
             return []
 
+        if chunk_size <= 0:
+            raise ValueError("chunk_size must be positive.")
+
+        if overlap < 0 or overlap >= chunk_size:
+            raise ValueError(
+                "overlap must be >= 0 and less than chunk_size."
+            )
+
+        words = cleaned_text.split(" ")
         chunks = []
 
         start = 0
 
-        text_length = len(
-            cleaned_text
-        )
+        while start < len(words):
+            end = start
+            current_length = 0
 
-        while start < text_length:
+            while end < len(words):
+                word_length = len(words[end])
+                additional_length = (
+                    word_length if end == start
+                    else word_length + 1
+                )
 
-            end = min(
-                start + chunk_size,
-                text_length
-            )
+                if (
+                    current_length + additional_length > chunk_size
+                    and end > start
+                ):
+                    break
 
-            chunk = cleaned_text[
-                start:end
-            ].strip()
+                current_length += additional_length
+                end += 1
+
+            chunk = " ".join(words[start:end])
 
             if chunk:
                 chunks.append(chunk)
 
-            if end >= text_length:
+            if end >= len(words):
                 break
 
-            start = end - overlap
+            if overlap == 0:
+                start = end
+                continue
+
+            next_start = end
+            overlap_length = 0
+
+            while next_start > start + 1:
+                candidate = words[next_start - 1]
+                additional_length = (
+                    len(candidate)
+                    if overlap_length == 0
+                    else len(candidate) + 1
+                )
+
+                if overlap_length + additional_length > overlap:
+                    break
+
+                overlap_length += additional_length
+                next_start -= 1
+
+            start = next_start
 
         return chunks
+
 
     # -------------------------------------------------
     # CREATE SEARCHABLE CHUNKS

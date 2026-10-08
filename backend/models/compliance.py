@@ -1,60 +1,30 @@
-from typing import List
 
+from typing import List, Optional
 from pydantic import BaseModel, Field
 
 
-# -----------------------------------------------------
-# RETRIEVAL SEARCH MODELS
-# -----------------------------------------------------
+# -----------------------------------------
+# RETRIEVAL SEARCH
+# -----------------------------------------
 
 class RetrievalSearchRequest(BaseModel):
     query: str = Field(
         ...,
         min_length=2,
-        description=(
-            "Maritime compliance or emergency "
-            "search query"
-        )
+        description="Maritime regulation search query"
     )
-
-    limit: int = Field(
-        default=5,
-        ge=1,
-        le=10,
-        description=(
-            "Maximum number of retrieval results"
-        )
-    )
+    limit: int = Field(default=5, ge=1, le=10)
 
 
 class RetrievalResult(BaseModel):
-    """
-    Result returned by Agent 3 hybrid retrieval.
-
-    Combines keyword/incident-aware retrieval
-    with semantic vector retrieval.
-    """
-
     filename: str
     source: str
     file_type: str
     chunk_id: int
-
-    # Score from the original keyword +
-    # incident-aware RetrievalService.
     keyword_score: int
-
-    # Semantic similarity produced by
-    # ChromaDB vector retrieval.
     similarity_score: float
-
-    # Incident identified by hybrid retrieval.
-    # Can be None for a general query.
-    detected_incident: str | None = None
-
-    # Final combined ranking score.
+    detected_incident: Optional[str] = None
     hybrid_score: float
-
     content: str
 
 
@@ -64,51 +34,28 @@ class RetrievalSearchResponse(BaseModel):
     results: List[RetrievalResult]
 
 
-# -----------------------------------------------------
-# COMPLIANCE CHECK MODELS
-# -----------------------------------------------------
+# -----------------------------------------
+# COMPLIANCE ASSESSMENT
+# -----------------------------------------
 
 class ComplianceCheckRequest(BaseModel):
     incident_description: str = Field(
         ...,
         min_length=10,
-        description=(
-            "Description of the maritime incident "
-            "and response actions"
-        )
+        description="Maritime incident and response actions"
     )
-
-    limit: int = Field(
-        default=5,
-        ge=1,
-        le=10,
-        description=(
-            "Maximum number of knowledge base results"
-        )
-    )
+    limit: int = Field(default=5, ge=1, le=10)
 
 
 class ComplianceReference(BaseModel):
-    """
-    Supporting reference returned by the hybrid
-    preliminary compliance assessment service.
-    """
-
     filename: str
     source: str
     file_type: str
-
-    # Original keyword / incident-aware retrieval score
+    chunk_id: int
     keyword_score: int
-
-    # Semantic similarity from ChromaDB vector retrieval
     similarity_score: float
-
-    # Final hybrid ranking score
     hybrid_score: float
-
-    # Incident detected by the hybrid retrieval service
-    detected_incident: str | None = None
+    detected_incident: Optional[str] = None
 
 
 class ComplianceCheckResponse(BaseModel):
@@ -116,5 +63,8 @@ class ComplianceCheckResponse(BaseModel):
     status: str
     matched_requirements: List[str]
     missing_requirements: List[str]
+    unverified_requirements: List[str] = Field(
+        default_factory=list
+    )
     references: List[ComplianceReference]
     disclaimer: str

@@ -1,37 +1,103 @@
-from fastapi import APIRouter, HTTPException
+
+"""
+SeaGuard AI - Compliance & Retrieval Agent Routes
+
+Features:
+- Maritime regulation and emergency procedure search
+- Preliminary incident compliance assessment
+- JWT authentication
+- Role-Based Access Control (RBAC)
+- Error handling and request validation
+
+Access Policy:
+    Crew    -> Search + Preliminary Assessment
+    Officer -> Search + Preliminary Assessment
+    Admin   -> Search + Preliminary Assessment
+
+All endpoints require authentication.
+
+IMPORTANT:
+Preliminary assessments are not final compliance
+decisions and require human verification.
+"""
+
+import logging
+
+from fastapi import (
+    APIRouter,
+    Depends,
+    HTTPException,
+    status,
+)
 
 from backend.models.compliance import (
     RetrievalSearchRequest,
     RetrievalSearchResponse,
     ComplianceCheckRequest,
-    ComplianceCheckResponse
+    ComplianceCheckResponse,
 )
 
 from backend.agents.compliance_retrieval_agent import (
-    compliance_retrieval_agent
+    compliance_retrieval_agent,
 )
 
+from backend.routes.auth import (
+    require_role,
+)
+
+
+# =====================================================
+# LOGGER CONFIGURATION
+# =====================================================
+
+logger = logging.getLogger(__name__)
+
+
+# =====================================================
+# ROLE PERMISSIONS
+# =====================================================
+
+ALLOWED_COMPLIANCE_ROLES = (
+    "crew",
+    "officer",
+    "admin",
+)
+
+
+# =====================================================
+# COMPLIANCE ROUTER
+# =====================================================
 
 router = APIRouter(
     prefix="/compliance",
-    tags=["Compliance & Retrieval Agent"]
+    tags=["Compliance & Retrieval Agent"],
 )
 
 
-# -----------------------------------------------------
-# KNOWLEDGE BASE SEARCH
-# -----------------------------------------------------
+# =====================================================
+# SEARCH MARITIME KNOWLEDGE
+# =====================================================
 
 @router.post(
     "/search",
-    response_model=RetrievalSearchResponse
+    response_model=RetrievalSearchResponse,
+    status_code=status.HTTP_200_OK,
 )
 def search_compliance_knowledge(
-    request: RetrievalSearchRequest
+    request: RetrievalSearchRequest,
+    current_user=Depends(
+        require_role(*ALLOWED_COMPLIANCE_ROLES)
+    ),
 ):
     """
-    Search the maritime knowledge base using the
-    Compliance & Retrieval Agent.
+    Search maritime regulations and emergency procedures.
+
+    Allowed roles:
+        crew
+        officer
+        admin
+
+    JWT authentication is required.
     """
 
     try:
@@ -39,89 +105,117 @@ def search_compliance_knowledge(
 
         if not query:
             raise HTTPException(
-                status_code=400,
-                detail="Search query cannot be empty."
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Search query cannot be empty.",
             )
 
         results = (
             compliance_retrieval_agent.search_knowledge(
                 query=query,
-                limit=request.limit
+                limit=request.limit,
             )
+        )
+
+        logger.info(
+            "Compliance search performed by user=%s, role=%s",
+            current_user.get("username"),
+            current_user.get("role"),
         )
 
         return {
             "query": query,
             "total_results": len(results),
-            "results": results
+            "results": results,
         }
 
     except HTTPException:
         raise
 
-    except Exception as error:
-        print(
-            f"Compliance retrieval error: {error}"
+    except Exception:
+        logger.exception(
+            "Compliance knowledge retrieval failed."
         )
 
         raise HTTPException(
-            status_code=500,
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=(
-                "Unable to search the maritime "
-                "knowledge base."
-            )
+                "Unable to search the maritime knowledge base."
+            ),
         )
 
 
-# -----------------------------------------------------
-# PRELIMINARY COMPLIANCE ASSESSMENT
-# -----------------------------------------------------
+# =====================================================
+# PRELIMINARY INCIDENT COMPLIANCE ASSESSMENT
+# =====================================================
 
 @router.post(
     "/check",
-    response_model=ComplianceCheckResponse
+    response_model=ComplianceCheckResponse,
+    status_code=status.HTTP_200_OK,
 )
 def check_incident_compliance(
-    request: ComplianceCheckRequest
+    request: ComplianceCheckRequest,
+    current_user=Depends(
+        require_role(*ALLOWED_COMPLIANCE_ROLES)
+    ),
 ):
     """
-    Perform a prototype preliminary maritime compliance
-    assessment using the Compliance & Retrieval Agent.
+    Perform a preliminary maritime compliance assessment.
+
+    Allowed roles:
+        crew
+        officer
+        admin
+
+    JWT authentication is required.
+
+    The result is preliminary and must be reviewed
+    by an authorized human officer.
     """
 
     try:
-        incident_description = (
+        description = (
             request.incident_description.strip()
         )
 
-        if not incident_description:
+        if not description:
             raise HTTPException(
-                status_code=400,
-                detail=(
-                    "Incident description cannot be empty."
-                )
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Incident description cannot be empty.",
             )
 
-        result = (
+        logger.info(
+            "Compliance assessment requested by user=%s, role=%s",
+            current_user.get("username"),
+            current_user.get("role"),
+        )
+
+        assessment = (
             compliance_retrieval_agent.assess_incident(
-                incident_description=incident_description,
-                limit=request.limit
+                incident_description=description,
+                limit=request.limit,
             )
         )
 
-        return result
+        logger.info(
+            "Compliance assessment completed for user=%s, status=%s",
+            current_user.get("username"),
+            assessment.get("status"),
+        )
+
+        return assessment
 
     except HTTPException:
         raise
 
-    except Exception as error:
-        print(
-            f"Compliance check error: {error}"
+    except Exception:
+        logger.exception(
+            "Compliance assessment failed."
         )
 
         raise HTTPException(
-            status_code=500,
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=(
                 "Unable to perform compliance assessment."
-            )
+            ),
         )
