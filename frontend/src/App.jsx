@@ -10,6 +10,9 @@ import {
 import DocumentAnalysis from "./pages/documents/DocumentAnalysis";
 import DocumentQuery from "./pages/documents/DocumentQuery";
 
+import ComplianceSearch from "./pages/compliance/ComplianceSearch";
+import ComplianceCheck from "./pages/compliance/ComplianceCheck";
+
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import OfficerArea from "./pages/auth/OfficerArea";
@@ -68,7 +71,7 @@ function App() {
 }
 
 function SeaGuardLayout() {
-  const { user, logout } = useAuth();
+  const { user, logout, token } = useAuth();
 
   return (
     <div className="app-shell">
@@ -138,6 +141,28 @@ function SeaGuardLayout() {
             >
               <span>✦</span>
               Document Q&A
+            </NavLink>
+
+            {/* Compliance Search - Rashini */}
+            <NavLink
+              to="/compliance/search"
+              className={({ isActive }) =>
+                `nav-link ${isActive ? "active" : ""}`
+              }
+            >
+              <span>⌕</span>
+              Compliance Search
+            </NavLink>
+
+            {/* Compliance Check - Rashini */}
+            <NavLink
+              to="/compliance/check"
+              className={({ isActive }) =>
+                `nav-link ${isActive ? "active" : ""}`
+              }
+            >
+              <span>✓</span>
+              Compliance Check
             </NavLink>
 
             {/* Officer Access */}
@@ -238,6 +263,18 @@ function SeaGuardLayout() {
           <Route
             path="/documents/query"
             element={<DocumentQuery />}
+          />
+
+          {/* Compliance Search - Rashini */}
+          <Route
+            path="/compliance/search"
+            element={<ComplianceSearch token={token} />}
+          />
+
+          {/* Compliance Check - Rashini */}
+          <Route
+            path="/compliance/check"
+            element={<ComplianceCheck token={token} />}
           />
 
           {/* Officer + Admin */}
