@@ -18,6 +18,9 @@ import Profile from "./pages/auth/Profile";
 import ResetPassword from "./pages/auth/ResetPassword";
 import ForgotPassword from "./pages/auth/ForgotPassword";
 
+import Dashboard from "./pages/coordinator/Dashboard";
+import IncidentCoordinator from "./pages/coordinator/IncidentCoordinator";
+
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import RoleProtectedRoute from "./components/auth/RoleProtectedRoute";
 
@@ -76,7 +79,7 @@ function SeaGuardLayout() {
       <header className="main-header">
         <div className="header-inner">
           {/* SeaGuard Brand */}
-          <NavLink to="/documents" className="brand">
+          <NavLink to="/dashboard" className="brand">
             <div className="brand-icon">⚓</div>
 
             <div>
@@ -92,6 +95,29 @@ function SeaGuardLayout() {
 
           {/* Navigation */}
           <nav className="main-nav">
+
+            {/* Dashboard - Pasindu */}
+            <NavLink
+              to="/dashboard"
+              className={({ isActive }) =>
+                `nav-link ${isActive ? "active" : ""}`
+              }
+            >
+              <span>⌂</span>
+              Dashboard
+            </NavLink>
+
+            {/* Incident Coordinator - Pasindu */}
+            <NavLink
+              to="/coordinator"
+              className={({ isActive }) =>
+                `nav-link ${isActive ? "active" : ""}`
+              }
+            >
+              <span>⚡</span>
+              Incident Coordinator
+            </NavLink>
+
             {/* Document Analysis */}
             <NavLink
               to="/documents"
@@ -186,8 +212,20 @@ function SeaGuardLayout() {
           <Route
             path="/"
             element={
-              <Navigate to="/documents" replace />
+              <Navigate to="/dashboard" replace />
             }
+          />
+
+          {/* Dashboard - Pasindu */}
+          <Route
+            path="/dashboard"
+            element={<Dashboard />}
+          />
+
+          {/* Incident Coordinator - Pasindu */}
+          <Route
+            path="/coordinator"
+            element={<IncidentCoordinator />}
           />
 
           {/* Document Analysis */}
@@ -236,7 +274,7 @@ function SeaGuardLayout() {
           <Route
             path="*"
             element={
-              <Navigate to="/documents" replace />
+              <Navigate to="/dashboard" replace />
             }
           />
         </Routes>

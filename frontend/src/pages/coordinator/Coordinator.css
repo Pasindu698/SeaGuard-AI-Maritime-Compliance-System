@@ -1,0 +1,600 @@
+
+/* =========================================
+   SEAGUARD AI PREMIUM DASHBOARD
+   Pasindu - Coordinator Agent Frontend
+========================================= */
+
+.sg-dashboard {
+  min-height: calc(100vh - 145px);
+  padding: 16px 28px 42px;
+  background:
+    radial-gradient(
+      circle at 50% 0%,
+      #e5f5ff 0%,
+      transparent 48%
+    ),
+    #f5faff;
+  color: #091a3b;
+}
+
+.sg-dashboard-container {
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+/* =========================================
+   HERO
+========================================= */
+
+.sg-hero {
+  position: relative;
+  min-height: 285px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 30px;
+  padding: 42px 60px;
+  overflow: hidden;
+  border-radius: 17px;
+  isolation: isolate;
+
+  background-color: #061b36;
+
+  background-image:
+    linear-gradient(
+      90deg,
+      rgba(3, 15, 39, 0.99) 0%,
+      rgba(3, 24, 52, 0.96) 30%,
+      rgba(3, 28, 58, 0.65) 54%,
+      rgba(3, 30, 61, 0.15) 100%
+    ),
+    url("/images/seaguard-ship.jfif");
+
+  background-position: center;
+  background-size: cover;
+
+  box-shadow: 0 14px 35px rgba(8, 38, 74, 0.12);
+}
+
+.sg-hero-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      180deg,
+      transparent 72%,
+      rgba(0, 9, 26, 0.25)
+    );
+}
+
+.sg-hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 640px;
+}
+
+.sg-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #00d4ff;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+
+.sg-eyebrow-line {
+  width: 58px;
+  height: 2px;
+  background: #00c8f8;
+}
+
+.sg-hero h1 {
+  margin: 17px 0 11px;
+  color: white;
+  font-size: clamp(30px, 3.2vw, 47px);
+  line-height: 1.15;
+  letter-spacing: -1.4px;
+  font-weight: 800;
+}
+
+.sg-hero h1 span {
+  color: #00c8f8;
+}
+
+.sg-hero-content > p {
+  max-width: 550px;
+  margin: 0;
+  color: #e0effc;
+  font-size: 15px;
+  line-height: 1.75;
+}
+
+.sg-hero-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 25px;
+}
+
+.sg-primary-btn,
+.sg-secondary-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 49px;
+  padding: 12px 18px;
+  border-radius: 11px;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: 0.2s ease;
+}
+
+.sg-primary-btn {
+  color: #062344;
+  background: linear-gradient(
+    135deg,
+    #00d7f8,
+    #00b5ef
+  );
+  box-shadow: 0 6px 22px rgba(0, 188, 239, 0.15);
+}
+
+.sg-secondary-btn {
+  color: #ffffff;
+  border: 1px solid #8bb9dc;
+  background: rgba(5, 28, 58, 0.7);
+}
+
+.sg-primary-btn:hover,
+.sg-secondary-btn:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.08);
+}
+
+/* =========================================
+   RADAR EFFECT
+========================================= */
+
+.sg-radar {
+  position: absolute;
+  z-index: 1;
+  width: 300px;
+  height: 300px;
+  top: -10px;
+  left: 53%;
+  border-radius: 50%;
+  pointer-events: none;
+
+  background:
+    radial-gradient(
+      circle,
+      #00e5ff 0 3px,
+      transparent 4px
+    ),
+    repeating-radial-gradient(
+      circle,
+      transparent 0 34px,
+      rgba(0, 210, 255, 0.2) 35px 36px
+    );
+
+  border: 1px solid rgba(0, 210, 255, 0.17);
+  opacity: 0.75;
+}
+
+.sg-radar::before,
+.sg-radar::after {
+  content: "";
+  position: absolute;
+  background: rgba(0, 210, 255, 0.2);
+}
+
+.sg-radar::before {
+  width: 1px;
+  height: 100%;
+  left: 50%;
+}
+
+.sg-radar::after {
+  width: 100%;
+  height: 1px;
+  top: 50%;
+}
+
+.sg-radar-center {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 20deg,
+    rgba(0, 217, 255, 0.13),
+    transparent 85deg,
+    transparent 360deg
+  );
+}
+
+/* =========================================
+   INTELLIGENCE CARD
+========================================= */
+
+.sg-hero-intelligence {
+  position: relative;
+  z-index: 2;
+  flex-shrink: 0;
+  align-self: flex-end;
+  width: 260px;
+  padding: 20px;
+  border-radius: 15px;
+  border: 1px solid rgba(117, 204, 249, 0.45);
+  background: rgba(2, 23, 49, 0.82);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.14);
+}
+
+.sg-hero-intelligence h3 {
+  margin: 0 0 10px;
+  color: white;
+  font-size: 15px;
+}
+
+.sg-hero-intelligence p {
+  margin: 0;
+  color: #b9d3e9;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.sg-hero-status {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 17px;
+  color: #e5f7ff;
+  font-size: 12px;
+}
+
+.sg-live-dot {
+  width: 10px;
+  height: 10px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: #00d99b;
+  box-shadow: 0 0 10px rgba(0, 217, 155, 0.35);
+}
+
+/* =========================================
+   ACCOUNT OVERVIEW
+========================================= */
+
+.sg-overview-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 19px;
+  margin-top: 20px;
+}
+
+.sg-overview-card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  min-height: 100px;
+  padding: 20px 26px;
+  background: white;
+  border: 1px solid #d8eafa;
+  border-radius: 15px;
+  box-shadow: 0 7px 24px rgba(20, 70, 110, 0.04);
+}
+
+.sg-overview-icon {
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: #0879df;
+  background: #e7f4ff;
+}
+
+.sg-overview-card > div:last-child {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+}
+
+.sg-overview-label {
+  color: #5776a1;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.4px;
+}
+
+.sg-overview-card strong {
+  overflow-wrap: anywhere;
+  color: #071a3a;
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.sg-overview-card .sg-role-value {
+  color: #0879df;
+  text-transform: lowercase;
+}
+
+/* =========================================
+   MODULES
+========================================= */
+
+.sg-modules-section {
+  margin-top: 34px;
+}
+
+.sg-section-kicker {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #007ce5;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.6px;
+}
+
+.sg-section-kicker span {
+  width: 65px;
+  height: 2px;
+  background: #087ce7;
+}
+
+.sg-modules-section h2 {
+  margin: 12px 0 8px;
+  color: #081a3c;
+  font-size: clamp(24px, 3vw, 32px);
+  font-weight: 800;
+  letter-spacing: -0.7px;
+}
+
+.sg-section-description {
+  margin: 0;
+  color: #4e6892;
+  font-size: 15px;
+}
+
+/* MODULE CARDS */
+
+.sg-modules-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 19px;
+  margin-top: 21px;
+}
+
+.sg-module-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 20px;
+  min-height: 193px;
+  padding: 24px 26px;
+  border: 1px solid #d7e9fa;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 8px 26px rgba(10, 49, 91, 0.04);
+  transition: 0.2s ease;
+}
+
+.sg-module-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 15px 35px rgba(10, 49, 91, 0.11);
+  border-color: #b7dcf9;
+}
+
+.sg-module-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 19px;
+}
+
+.sg-module-icon {
+  width: 72px;
+  height: 72px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.sg-module-blue {
+  color: #0879e9;
+  background: #e1f1ff;
+}
+
+.sg-module-green {
+  color: #08a67b;
+  background: #cff7e9;
+}
+
+.sg-module-purple {
+  color: #7b2cde;
+  background: #eadbff;
+}
+
+.sg-module-text {
+  min-width: 0;
+}
+
+.sg-module-text h3 {
+  margin: 10px 0 8px;
+  color: #091a3b;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.sg-module-text p {
+  margin: 0;
+  color: #4f6890;
+  font-size: 13px;
+  line-height: 1.75;
+}
+
+.sg-module-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  width: fit-content;
+  color: #0078e7;
+  font-size: 14px;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.sg-module-action:hover {
+  color: #0058af;
+}
+
+/* =========================================
+   SAFETY NOTICE
+========================================= */
+
+.sg-safety-banner {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-top: 21px;
+  padding: 20px 26px;
+  border: 1px solid #d4eafb;
+  border-radius: 16px;
+  background: linear-gradient(
+    100deg,
+    #e2f2ff,
+    #eaf6ff
+  );
+}
+
+.sg-safety-icon {
+  width: 75px;
+  height: 75px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: #0079e6;
+  background: #c9e7ff;
+}
+
+.sg-safety-banner h3 {
+  margin: 0 0 8px;
+  color: #081a3c;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.sg-safety-banner p {
+  margin: 0;
+  color: #4d6891;
+  font-size: 13px;
+  line-height: 1.75;
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 1150px) {
+  .sg-hero {
+    padding: 36px;
+  }
+
+  .sg-hero-intelligence {
+    width: 220px;
+  }
+
+  .sg-module-content {
+    flex-direction: column;
+  }
+
+  .sg-module-text h3 {
+    margin-top: 0;
+  }
+}
+
+@media (max-width: 900px) {
+  .sg-hero {
+    flex-direction: column;
+    align-items: flex-start;
+    background-position: 60% center;
+  }
+
+  .sg-hero-intelligence {
+    align-self: flex-start;
+    width: min(100%, 300px);
+  }
+
+  .sg-overview-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .sg-modules-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .sg-module-content {
+    flex-direction: row;
+  }
+}
+
+@media (max-width: 600px) {
+  .sg-dashboard {
+    padding: 14px 13px 35px;
+  }
+
+  .sg-hero {
+    padding: 30px 23px;
+  }
+
+  .sg-hero h1 {
+    font-size: 32px;
+  }
+
+  .sg-hero-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .sg-primary-btn,
+  .sg-secondary-btn {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .sg-radar {
+    left: 40%;
+    opacity: 0.3;
+  }
+
+  .sg-overview-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .sg-module-card {
+    padding: 22px;
+  }
+
+  .sg-module-content {
+    flex-direction: column;
+  }
+
+  .sg-safety-banner {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

@@ -1,3 +1,4 @@
+
 from io import BytesIO
 from pathlib import Path
 from datetime import datetime, timezone
@@ -8,6 +9,8 @@ from PIL import Image
 
 from fastapi import UploadFile
 from pypdf import PdfReader
+from bson import ObjectId
+from bson.errors import InvalidId
 
 from backend.database.mongodb import db
 from backend.utils.file_security import validate_uploaded_file
@@ -21,6 +24,10 @@ class DocumentService:
             ["en"],
             gpu=False
         )
+
+    # =====================================
+    # PROCESS UPLOADED DOCUMENT
+    # =====================================
 
     async def process_document(
         self,
@@ -87,17 +94,13 @@ class DocumentService:
         )
 
         # Detect maritime incident type
-        incident_type = (
-            self.detect_incident_type(
-                text
-            )
+        incident_type = self.detect_incident_type(
+            text
         )
 
         # Extract vessel name
-        vessel_name = (
-            self.extract_vessel_name(
-                text
-            )
+        vessel_name = self.extract_vessel_name(
+            text
         )
 
         return {
@@ -131,9 +134,7 @@ class DocumentService:
 
             for page in reader.pages:
 
-                page_text = (
-                    page.extract_text()
-                )
+                page_text = page.extract_text()
 
                 if page_text:
 
@@ -220,11 +221,9 @@ class DocumentService:
             )
 
             # Extract text using OCR
-            results = (
-                self.ocr_reader.readtext(
-                    image_array,
-                    detail=0
-                )
+            results = self.ocr_reader.readtext(
+                image_array,
+                detail=0
             )
 
             text = "\n".join(
@@ -272,9 +271,7 @@ class DocumentService:
             :max_length
         ]
 
-        last_space = (
-            summary.rfind(" ")
-        )
+        last_space = summary.rfind(" ")
 
         if last_space > 0:
 
@@ -293,9 +290,7 @@ class DocumentService:
         text: str
     ) -> str:
 
-        text_lower = (
-            text.lower()
-        )
+        text_lower = text.lower()
 
         incident_keywords = {
 
@@ -363,13 +358,9 @@ class DocumentService:
 
         for line in lines:
 
-            clean_line = (
-                line.strip()
-            )
+            clean_line = line.strip()
 
-            lower_line = (
-                clean_line.lower()
-            )
+            lower_line = clean_line.lower()
 
             for label in labels:
 
@@ -377,12 +368,10 @@ class DocumentService:
                     label
                 ):
 
-                    value = (
-                        clean_line.split(
-                            ":",
-                            1
-                        )[1].strip()
-                    )
+                    value = clean_line.split(
+                        ":",
+                        1
+                    )[1].strip()
 
                     if value:
 
@@ -401,7 +390,8 @@ class DocumentService:
         summary: str,
         incident_type: str,
         document_type: str,
-        vessel_name=None
+        vessel_name=None,
+        owner_id=None
     ) -> str:
 
         if db is None:
@@ -415,38 +405,124 @@ class DocumentService:
 
             "filename": filename,
 
-            "document_type": (
-                document_type
-            ),
+            "document_type": document_type,
 
             "extracted_text": text,
 
             "summary": summary,
 
-            "incident_type": (
-                incident_type
-            ),
+            "incident_type": incident_type,
 
-            "vessel_name": (
-                vessel_name
-            ),
+            "vessel_name": vessel_name,
 
-            "uploaded_at": (
-                datetime.now(
-                    timezone.utc
-                )
+            "uploaded_at": datetime.now(
+                timezone.utc
             )
         }
 
-        result = (
-            db.documents.insert_one(
-                document
+        # Store document ownership when supplied.
+        # Upload route must pass the authenticated user ID.
+        if owner_id is not None:
+
+            document["owner_id"] = str(
+                owner_id
             )
+
+        result = db.documents.insert_one(
+            document
         )
 
         return str(
             result.inserted_id
         )
+
+    # =====================================
+    # GET SAVED DOCUMENT BY ID
+    # =====================================
+
+    def get_document_by_id(
+        self,
+        document_id: str,
+        owner_id: str
+    ) -> dict:
+
+        if db is None:
+
+            raise RuntimeError(
+                "Database connection "
+                "is not available."
+            )
+
+        if not owner_id:
+
+            raise ValueError(
+                "Authenticated user ID is required."
+            )
+
+        try:
+
+            object_id = ObjectId(
+                document_id
+            )
+
+        except (InvalidId, TypeError):
+
+            raise ValueError(
+                "Invalid document ID."
+            )
+
+        # Only return documents owned by the
+        # authenticated user.
+        document = db.documents.find_one(
+            {
+                "_id": object_id,
+                "owner_id": str(owner_id)
+            }
+        )
+
+        if document is None:
+
+            raise ValueError(
+                "Document not found or access denied."
+            )
+
+        return {
+
+            "document_id": str(
+                document["_id"]
+            ),
+
+            "filename": document.get(
+                "filename"
+            ),
+
+            "document_type": document.get(
+                "document_type"
+            ),
+
+            "extracted_text": document.get(
+                "extracted_text",
+                ""
+            ),
+
+            "summary": document.get(
+                "summary",
+                ""
+            ),
+
+            "incident_type": document.get(
+                "incident_type",
+                "general"
+            ),
+
+            "vessel_name": document.get(
+                "vessel_name"
+            ),
+
+            "uploaded_at": document.get(
+                "uploaded_at"
+            )
+        }
 
 
 # Create Document Service instance

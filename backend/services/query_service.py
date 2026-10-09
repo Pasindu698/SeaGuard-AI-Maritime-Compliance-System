@@ -1,7 +1,12 @@
+
 from backend.database.mongodb import db
 
 
 class QueryService:
+
+    # =====================================
+    # DETECT QUERY INTENT
+    # =====================================
 
     def detect_intent(self, query: str) -> str:
 
@@ -50,12 +55,24 @@ class QueryService:
 
         return "general_maritime_query"
 
+    # =====================================
+    # SEARCH AUTHENTICATED USER DOCUMENTS
+    # =====================================
 
-    def search_documents(self, query: str):
+    def search_documents(
+        self,
+        query: str,
+        owner_id: str
+    ):
 
         if db is None:
             raise RuntimeError(
                 "Database connection is not available."
+            )
+
+        if not owner_id:
+            raise ValueError(
+                "Authenticated user ID is required."
             )
 
         query_words = [
@@ -64,9 +81,14 @@ class QueryService:
             if len(word) > 2
         ]
 
+        # SECURITY:
+        # Retrieve only documents owned by
+        # the authenticated user.
         documents = list(
             db.documents.find(
-                {},
+                {
+                    "owner_id": str(owner_id)
+                },
                 {
                     "_id": 0,
                     "filename": 1,
@@ -83,9 +105,9 @@ class QueryService:
         for document in documents:
 
             searchable_text = (
-                document.get("extracted_text", "")
+                (document.get("extracted_text") or "")
                 + " "
-                + document.get("summary", "")
+                + (document.get("summary") or "")
             ).lower()
 
             score = sum(
@@ -109,20 +131,43 @@ class QueryService:
             for score, document in matches[:5]
         ]
 
+    # =====================================
+    # ANSWER DOCUMENT QUERY
+    # =====================================
 
-    def answer_query(self, query: str):
+    def answer_query(
+        self,
+        query: str,
+        owner_id: str
+    ):
 
-        intent = self.detect_intent(query)
+        if not query or not query.strip():
+            raise ValueError(
+                "Query cannot be empty."
+            )
 
-        matches = self.search_documents(query)
+        if not owner_id:
+            raise ValueError(
+                "Authenticated user ID is required."
+            )
+
+        intent = self.detect_intent(
+            query
+        )
+
+        matches = self.search_documents(
+            query=query,
+            owner_id=owner_id
+        )
 
         if not matches:
+
             return {
                 "query": query,
                 "intent": intent,
                 "answer": (
                     "No matching information was found "
-                    "in the uploaded maritime documents."
+                    "in your uploaded maritime documents."
                 ),
                 "sources": []
             }
@@ -133,9 +178,8 @@ class QueryService:
             "query": query,
             "intent": intent,
             "answer": best_document.get(
-                "summary",
-                "Matching document found."
-            ),
+                "summary"
+            ) or "Matching document found.",
             "sources": [
                 document.get(
                     "filename",

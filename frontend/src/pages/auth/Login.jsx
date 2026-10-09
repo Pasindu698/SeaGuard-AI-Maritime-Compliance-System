@@ -43,7 +43,7 @@ function Login() {
         formData.password
       );
 
-      navigate("/documents", { replace: true });
+      navigate("/dashboard", { replace: true });
     } catch (err) {
       setError(err.message || "Login failed. Please try again.");
     } finally {
