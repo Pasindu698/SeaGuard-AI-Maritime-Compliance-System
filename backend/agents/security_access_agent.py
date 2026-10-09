@@ -1,3 +1,4 @@
+
 from backend.services.auth_service import auth_service
 
 
@@ -19,7 +20,6 @@ class SecurityAccessAgent:
             role=role
         )
 
-
     def login_user(
         self,
         username: str,
@@ -30,12 +30,23 @@ class SecurityAccessAgent:
             password=password
         )
 
-
     def get_user_profile(
         self,
         username: str
     ):
         return auth_service.get_user(username)
+
+    def change_password(
+        self,
+        username: str,
+        current_password: str,
+        new_password: str
+    ):
+        return auth_service.change_password(
+            username=username,
+            current_password=current_password,
+            new_password=new_password
+        )
 
 
 security_agent = SecurityAccessAgent()

@@ -230,3 +230,252 @@ main {
     text-align: center;
   }
 }
+
+/* =========================
+   AUTHENTICATED USER NAV
+========================= */
+
+.user-nav {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: 10px;
+  padding-left: 16px;
+  border-left: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.user-info {
+  text-align: right;
+  line-height: 1.2;
+}
+
+.user-name {
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.user-role {
+  margin-top: 4px;
+  color: #38bdf8;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.logout-button {
+  padding: 9px 13px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 9px;
+
+  background: rgba(255, 255, 255, 0.07);
+  color: #e2e8f0;
+
+  font-size: 12px;
+  font-weight: 600;
+
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.logout-button:hover {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(248, 113, 113, 0.35);
+  color: #fecaca;
+}
+
+@media (max-width: 900px) {
+  .user-nav {
+    width: 100%;
+    margin-left: 0;
+    padding-left: 0;
+    padding-top: 10px;
+
+    border-left: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+
+    justify-content: space-between;
+  }
+
+  .user-info {
+    text-align: left;
+  }
+}
+/* =========================
+   RESET PASSWORD PAGE
+========================= */
+
+.reset-page {
+  min-height: calc(100vh - 145px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  background: linear-gradient(135deg, #edf7ff, #e8f0fa);
+}
+
+.reset-card {
+  width: 100%;
+  max-width: 440px;
+  padding: 38px;
+  background: #ffffff;
+  border: 1px solid #dce9f5;
+  border-radius: 20px;
+  box-shadow: 0 18px 50px rgba(12, 37, 67, 0.14);
+}
+
+.reset-card h2 {
+  margin: 0 0 10px;
+  color: #102b4e;
+  font-size: 28px;
+}
+
+.reset-card > p {
+  color: #64748b;
+  margin-bottom: 25px;
+}
+
+.reset-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.reset-form input {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  font-size: 15px;
+  box-sizing: border-box;
+  outline: none;
+}
+
+.reset-form input:focus {
+  border-color: #0284c7;
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.12);
+}
+
+.reset-form button {
+  padding: 14px;
+  background: linear-gradient(90deg, #0284c7, #0369a1);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.reset-form button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.reset-error {
+  color: #b91c1c;
+  background: #fef2f2;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+.reset-success {
+  color: #166534;
+  background: #f0fdf4;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+.reset-back {
+  display: block;
+  margin-top: 22px;
+  text-align: center;
+  color: #0369a1;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+
+/* =========================
+   RESET PASSWORD - EXTRA STYLING
+========================= */
+
+.reset-brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 28px;
+  color: #0c3556;
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.reset-brand-icon {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  color: white;
+  background: linear-gradient(135deg, #0284c7, #06b6d4);
+  font-size: 23px;
+}
+
+.reset-form > label:not(.reset-show-password) {
+  color: #334155;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.reset-show-password {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: #475569;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.reset-form .reset-show-password input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  padding: 0;
+  flex-shrink: 0;
+  accent-color: #0284c7;
+}
+
+.reset-password-hint {
+  color: #64748b;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.reset-form button:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+.reset-form button:focus-visible,
+.reset-form input:focus-visible {
+  outline: 2px solid #0284c7;
+  outline-offset: 2px;
+}
+
+@media (max-width: 480px) {
+  .reset-page {
+    padding: 24px 14px;
+  }
+
+  .reset-card {
+    padding: 26px 20px;
+  }
+
+  .reset-card h2 {
+    font-size: 24px;
+  }
+}
