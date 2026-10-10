@@ -7,12 +7,6 @@ import {
   Routes,
 } from "react-router-dom";
 
-import DocumentAnalysis from "./pages/documents/DocumentAnalysis";
-import DocumentQuery from "./pages/documents/DocumentQuery";
-
-import ComplianceSearch from "./pages/compliance/ComplianceSearch";
-import ComplianceCheck from "./pages/compliance/ComplianceCheck";
-
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import OfficerArea from "./pages/auth/OfficerArea";
@@ -22,7 +16,8 @@ import ResetPassword from "./pages/auth/ResetPassword";
 import ForgotPassword from "./pages/auth/ForgotPassword";
 
 import Dashboard from "./pages/coordinator/Dashboard";
-import IncidentCoordinator from "./pages/coordinator/IncidentCoordinator";
+import AIWorkspace from "./pages/AIWorkspace/AIWorkspace";
+import AIAssistant from "./pages/AIAssistant/AIAssistant";
 
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import RoleProtectedRoute from "./components/auth/RoleProtectedRoute";
@@ -35,28 +30,13 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* =========================
-            PUBLIC ROUTES
-        ========================= */}
-
+        {/* Public Routes */}
         <Route path="/login" element={<Login />} />
-
         <Route path="/register" element={<Register />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
 
-        <Route
-          path="/forgot-password"
-          element={<ForgotPassword />}
-        />
-
-        <Route
-          path="/reset-password"
-          element={<ResetPassword />}
-        />
-
-        {/* =========================
-            PROTECTED APPLICATION
-        ========================= */}
-
+        {/* Protected Application */}
         <Route
           path="/*"
           element={
@@ -71,17 +51,13 @@ function App() {
 }
 
 function SeaGuardLayout() {
-  const { user, logout, token } = useAuth();
+  const { user, logout } = useAuth();
 
   return (
     <div className="app-shell">
-      {/* =========================
-          HEADER
-      ========================= */}
-
+      {/* HEADER */}
       <header className="main-header">
         <div className="header-inner">
-          {/* SeaGuard Brand */}
           <NavLink to="/dashboard" className="brand">
             <div className="brand-icon">⚓</div>
 
@@ -96,10 +72,8 @@ function SeaGuardLayout() {
             </div>
           </NavLink>
 
-          {/* Navigation */}
+          {/* MAIN NAVIGATION */}
           <nav className="main-nav">
-
-            {/* Dashboard - Pasindu */}
             <NavLink
               to="/dashboard"
               className={({ isActive }) =>
@@ -110,62 +84,26 @@ function SeaGuardLayout() {
               Dashboard
             </NavLink>
 
-            {/* Incident Coordinator - Pasindu */}
             <NavLink
-              to="/coordinator"
-              className={({ isActive }) =>
-                `nav-link ${isActive ? "active" : ""}`
-              }
-            >
-              <span>⚡</span>
-              Incident Coordinator
-            </NavLink>
-
-            {/* Document Analysis */}
-            <NavLink
-              to="/documents"
-              className={({ isActive }) =>
-                `nav-link ${isActive ? "active" : ""}`
-              }
-            >
-              <span>▣</span>
-              Document Analysis
-            </NavLink>
-
-            {/* Document Q&A */}
-            <NavLink
-              to="/documents/query"
+              to="/ai-workspace"
               className={({ isActive }) =>
                 `nav-link ${isActive ? "active" : ""}`
               }
             >
               <span>✦</span>
-              Document Q&A
+              AI Workspace
             </NavLink>
 
-            {/* Compliance Search - Rashini */}
             <NavLink
-              to="/compliance/search"
+              to="/ai-assistant"
               className={({ isActive }) =>
                 `nav-link ${isActive ? "active" : ""}`
               }
             >
-              <span>⌕</span>
-              Compliance Search
+              <span>✧</span>
+              AI Assistant
             </NavLink>
 
-            {/* Compliance Check - Rashini */}
-            <NavLink
-              to="/compliance/check"
-              className={({ isActive }) =>
-                `nav-link ${isActive ? "active" : ""}`
-              }
-            >
-              <span>✓</span>
-              Compliance Check
-            </NavLink>
-
-            {/* Officer Access */}
             {(user?.role === "officer" ||
               user?.role === "admin") && (
               <NavLink
@@ -179,7 +117,6 @@ function SeaGuardLayout() {
               </NavLink>
             )}
 
-            {/* Admin Access */}
             {user?.role === "admin" && (
               <NavLink
                 to="/admin"
@@ -192,7 +129,6 @@ function SeaGuardLayout() {
               </NavLink>
             )}
 
-            {/* Profile */}
             <NavLink
               to="/profile"
               className={({ isActive }) =>
@@ -203,7 +139,6 @@ function SeaGuardLayout() {
               My Profile
             </NavLink>
 
-            {/* Logged-in User */}
             <div className="user-nav">
               <div className="user-info">
                 <div className="user-name">
@@ -227,100 +162,82 @@ function SeaGuardLayout() {
         </div>
       </header>
 
-      {/* =========================
-          MAIN APPLICATION
-      ========================= */}
-
+      {/* MAIN APPLICATION */}
       <main>
         <Routes>
-          {/* Default Route */}
           <Route
             path="/"
-            element={
-              <Navigate to="/dashboard" replace />
-            }
+            element={<Navigate to="/dashboard" replace />}
           />
 
-          {/* Dashboard - Pasindu */}
+          <Route path="/dashboard" element={<Dashboard />} />
+
+          {/* UNIFIED MULTI-AGENT WORKSPACE */}
           <Route
-            path="/dashboard"
-            element={<Dashboard />}
+            path="/ai-workspace"
+            element={<AIWorkspace />}
           />
 
-          {/* Incident Coordinator - Pasindu */}
+          <Route
+            path="/ai-assistant"
+            element={<AIAssistant />}
+          />
+
+          {/* LEGACY ROUTE REDIRECTS */}
           <Route
             path="/coordinator"
-            element={<IncidentCoordinator />}
+            element={<Navigate to="/ai-workspace" replace />}
           />
 
-          {/* Document Analysis */}
           <Route
             path="/documents"
-            element={<DocumentAnalysis />}
+            element={<Navigate to="/ai-workspace" replace />}
           />
 
-          {/* Document Q&A */}
           <Route
             path="/documents/query"
-            element={<DocumentQuery />}
+            element={<Navigate to="/ai-workspace" replace />}
           />
 
-          {/* Compliance Search - Rashini */}
           <Route
             path="/compliance/search"
-            element={<ComplianceSearch token={token} />}
+            element={<Navigate to="/ai-workspace" replace />}
           />
 
-          {/* Compliance Check - Rashini */}
           <Route
             path="/compliance/check"
-            element={<ComplianceCheck token={token} />}
+            element={<Navigate to="/ai-workspace" replace />}
           />
 
-          {/* Officer + Admin */}
+          {/* ROLE PROTECTED ROUTES */}
           <Route
             path="/officer"
             element={
-              <RoleProtectedRoute
-                allowedRoles={["officer", "admin"]}
-              >
+              <RoleProtectedRoute allowedRoles={["officer", "admin"]}>
                 <OfficerArea />
               </RoleProtectedRoute>
             }
           />
 
-          {/* Admin Only */}
           <Route
             path="/admin"
             element={
-              <RoleProtectedRoute
-                allowedRoles={["admin"]}
-              >
+              <RoleProtectedRoute allowedRoles={["admin"]}>
                 <AdminArea />
               </RoleProtectedRoute>
             }
           />
 
-          {/* User Profile */}
-          <Route
-            path="/profile"
-            element={<Profile />}
-          />
+          <Route path="/profile" element={<Profile />} />
 
-          {/* Unknown Route */}
           <Route
             path="*"
-            element={
-              <Navigate to="/dashboard" replace />
-            }
+            element={<Navigate to="/dashboard" replace />}
           />
         </Routes>
       </main>
 
-      {/* =========================
-          FOOTER
-      ========================= */}
-
+      {/* FOOTER */}
       <footer className="footer">
         <div>
           <strong>SeaGuard AI</strong>

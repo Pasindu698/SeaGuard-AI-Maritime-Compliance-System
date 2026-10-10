@@ -12,6 +12,11 @@ from typing import Dict, List, Optional
 
 from backend.database.mongodb import db
 from backend.services.hybrid_retrieval_service import hybrid_retrieval_service
+from backend.services.reference_summary import (
+    add_reference_summaries,
+)
+
+from backend.services.reference_summary import clean_reference_content
 
 logger = logging.getLogger(__name__)
 
@@ -545,6 +550,45 @@ class ComplianceService:
                     "detected_incident",
                 )
             })
+
+        references = add_reference_summaries(
+            references=references,
+            retrieval_results=retrieval_results,
+            query=incident_description,
+        )
+
+        
+        # -----------------------------------------
+        # SOURCE EVIDENCE PREVIEW
+        # -----------------------------------------
+
+        for reference in references:
+            source = reference.get("source")
+            chunk_id = reference.get("chunk_id")
+
+            matching_chunk = next(
+                (
+                    result
+                    for result in retrieval_results
+                    if result.get("source") == source
+                    and result.get("chunk_id") == chunk_id
+                ),
+                None,
+            )
+
+            if matching_chunk is None:
+                reference["evidence"] = ""
+                continue
+
+            # Clean the retrieved content without
+            # exposing metadata-only fields.
+            evidence = clean_reference_content(
+                matching_chunk.get("content", "")
+            )
+
+            # Bound the amount of text returned to the client.
+            reference["evidence"] = evidence[:1200]
+
 
         assessment = {
             "assessment_type":

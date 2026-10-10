@@ -61,3 +61,48 @@ export async function checkCompliance(
     token
   );
 }
+
+
+export async function fetchOriginalDocument(source, token) {
+  if (!token) {
+    throw new Error("Please log in to preview documents.");
+  }
+
+  if (!source || typeof source !== "string") {
+    throw new Error("Invalid document source.");
+  }
+
+  // Encode each path segment while preserving folder separators.
+  const encodedPath = source
+    .replaceAll("\\", "/")
+    .split("/")
+    .map(encodeURIComponent)
+    .join("/");
+
+  const response = await fetch(
+    `${API_BASE_URL}/compliance/documents/${encodedPath}`,
+    {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      cache: "no-store",
+    }
+  );
+
+  if (!response.ok) {
+    let message = "Unable to load the original document.";
+
+    if (response.status === 401) {
+      message = "Session expired. Please log in again.";
+    } else if (response.status === 403) {
+      message = "You do not have permission to view this document.";
+    } else if (response.status === 404) {
+      message = "Original document was not found.";
+    }
+
+    throw new Error(message);
+  }
+
+  return response.blob();
+}

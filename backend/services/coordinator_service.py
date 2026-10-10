@@ -249,16 +249,29 @@ class CoordinatorService:
             )
         return actions[:6]
 
-    def _build_references(self, compliance_result: Dict[str, Any]) -> List[Dict[str, Any]]:
+    def _build_references(
+        self,
+        compliance_result: Dict[str, Any],
+    ) -> List[Dict[str, Any]]:
+
         references = []
+
         for reference in compliance_result.get("references") or []:
             references.append({
                 "filename": reference.get("filename", "unknown"),
                 "source": reference.get("source", ""),
                 "file_type": reference.get("file_type", ""),
                 "detected_incident": reference.get("detected_incident"),
-                "hybrid_score": float(reference.get("hybrid_score", 0) or 0),
+                "hybrid_score": float(
+                    reference.get("hybrid_score", 0) or 0
+                ),
+                "summary": reference.get("summary", ""),
+                "summary_type": reference.get(
+                    "summary_type", "extractive"
+                ),
+                "evidence": reference.get("evidence", ""),
             })
+
         return references
 
     def _build_final_response(
