@@ -7,6 +7,14 @@ import {
   Routes,
 } from "react-router-dom";
 
+import Home from "./pages/Home";
+
+import DocumentAnalysis from "./pages/documents/DocumentAnalysis";
+import DocumentQuery from "./pages/documents/DocumentQuery";
+
+import ComplianceSearch from "./pages/compliance/ComplianceSearch";
+import ComplianceCheck from "./pages/compliance/ComplianceCheck";
+
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import OfficerArea from "./pages/auth/OfficerArea";
@@ -16,8 +24,7 @@ import ResetPassword from "./pages/auth/ResetPassword";
 import ForgotPassword from "./pages/auth/ForgotPassword";
 
 import Dashboard from "./pages/coordinator/Dashboard";
-import AIWorkspace from "./pages/AIWorkspace/AIWorkspace";
-import AIAssistant from "./pages/AIAssistant/AIAssistant";
+import IncidentCoordinator from "./pages/coordinator/IncidentCoordinator";
 
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import RoleProtectedRoute from "./components/auth/RoleProtectedRoute";
@@ -26,17 +33,34 @@ import { useAuth } from "./context/AuthContext";
 
 import "./App.css";
 
+// =====================================
+// MAIN APPLICATION ROUTER
+// =====================================
+
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Public Routes */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
 
-        {/* Protected Application */}
+        {/* PUBLIC HOME PAGE */}
+        <Route path="/" element={<Home />} />
+
+        {/* AUTHENTICATION */}
+        <Route path="/login" element={<Login />} />
+
+        <Route path="/register" element={<Register />} />
+
+        <Route
+          path="/forgot-password"
+          element={<ForgotPassword />}
+        />
+
+        <Route
+          path="/reset-password"
+          element={<ResetPassword />}
+        />
+
+        {/* PROTECTED APPLICATION */}
         <Route
           path="/*"
           element={
@@ -45,19 +69,30 @@ function App() {
             </ProtectedRoute>
           }
         />
+
       </Routes>
     </BrowserRouter>
   );
 }
 
+// =====================================
+// AUTHENTICATED APPLICATION LAYOUT
+// =====================================
+
 function SeaGuardLayout() {
-  const { user, logout } = useAuth();
+  const { user, logout, token } = useAuth();
+
+  const navClass = ({ isActive }) =>
+    `nav-link ${isActive ? "active" : ""}`;
 
   return (
     <div className="app-shell">
+
       {/* HEADER */}
       <header className="main-header">
         <div className="header-inner">
+
+          {/* BRAND */}
           <NavLink to="/dashboard" className="brand">
             <div className="brand-icon">⚓</div>
 
@@ -72,81 +107,99 @@ function SeaGuardLayout() {
             </div>
           </NavLink>
 
-          {/* MAIN NAVIGATION */}
-          <nav className="main-nav">
+          {/* NAVIGATION */}
+          <nav className="main-nav" aria-label="Application navigation">
+
             <NavLink
               to="/dashboard"
-              className={({ isActive }) =>
-                `nav-link ${isActive ? "active" : ""}`
-              }
+              className={navClass}
             >
               <span>⌂</span>
               Dashboard
             </NavLink>
 
             <NavLink
-              to="/ai-workspace"
-              className={({ isActive }) =>
-                `nav-link ${isActive ? "active" : ""}`
-              }
+              to="/coordinator"
+              className={navClass}
             >
-              <span>✦</span>
-              AI Workspace
+              <span>⚡</span>
+              Incident Coordinator
             </NavLink>
 
             <NavLink
-              to="/ai-assistant"
-              className={({ isActive }) =>
-                `nav-link ${isActive ? "active" : ""}`
-              }
+              to="/documents"
+              end
+              className={navClass}
             >
-              <span>✧</span>
-              AI Assistant
+              <span>▣</span>
+              Document Analysis
             </NavLink>
 
+            <NavLink
+              to="/documents/query"
+              className={navClass}
+            >
+              <span>✦</span>
+              Document Q&A
+            </NavLink>
+
+            <NavLink
+              to="/compliance/search"
+              className={navClass}
+            >
+              <span>⌕</span>
+              Compliance Search
+            </NavLink>
+
+            <NavLink
+              to="/compliance/check"
+              className={navClass}
+            >
+              <span>✓</span>
+              Compliance Check
+            </NavLink>
+
+            {/* OFFICER ACCESS */}
             {(user?.role === "officer" ||
               user?.role === "admin") && (
               <NavLink
                 to="/officer"
-                className={({ isActive }) =>
-                  `nav-link ${isActive ? "active" : ""}`
-                }
+                className={navClass}
               >
                 <span>⚓</span>
                 Officer Area
               </NavLink>
             )}
 
+            {/* ADMIN ACCESS */}
             {user?.role === "admin" && (
               <NavLink
                 to="/admin"
-                className={({ isActive }) =>
-                  `nav-link ${isActive ? "active" : ""}`
-                }
+                className={navClass}
               >
                 <span>🔐</span>
                 Admin
               </NavLink>
             )}
 
+            {/* PROFILE */}
             <NavLink
               to="/profile"
-              className={({ isActive }) =>
-                `nav-link ${isActive ? "active" : ""}`
-              }
+              className={navClass}
             >
               <span>◉</span>
               My Profile
             </NavLink>
 
+            {/* USER INFORMATION */}
             <div className="user-nav">
               <div className="user-info">
                 <div className="user-name">
-                  {user?.username}
+                  {user?.username || "User"}
                 </div>
 
                 <div className="user-role">
-                  {user?.role}
+                  {user?.role || "crew"}
                 </div>
               </div>
 
@@ -158,62 +211,56 @@ function SeaGuardLayout() {
                 Logout
               </button>
             </div>
+
           </nav>
         </div>
       </header>
 
-      {/* MAIN APPLICATION */}
-      <main>
+      {/* MAIN APPLICATION CONTENT */}
+      <main className="app-main">
         <Routes>
+
           <Route
             path="/"
             element={<Navigate to="/dashboard" replace />}
           />
 
-          <Route path="/dashboard" element={<Dashboard />} />
-
-          {/* UNIFIED MULTI-AGENT WORKSPACE */}
           <Route
-            path="/ai-workspace"
-            element={<AIWorkspace />}
+            path="/dashboard"
+            element={<Dashboard />}
           />
 
-          <Route
-            path="/ai-assistant"
-            element={<AIAssistant />}
-          />
-
-          {/* LEGACY ROUTE REDIRECTS */}
           <Route
             path="/coordinator"
-            element={<Navigate to="/ai-workspace" replace />}
+            element={<IncidentCoordinator />}
           />
 
           <Route
             path="/documents"
-            element={<Navigate to="/ai-workspace" replace />}
+            element={<DocumentAnalysis />}
           />
 
           <Route
             path="/documents/query"
-            element={<Navigate to="/ai-workspace" replace />}
+            element={<DocumentQuery />}
           />
 
           <Route
             path="/compliance/search"
-            element={<Navigate to="/ai-workspace" replace />}
+            element={<ComplianceSearch token={token} />}
           />
 
           <Route
             path="/compliance/check"
-            element={<Navigate to="/ai-workspace" replace />}
+            element={<ComplianceCheck token={token} />}
           />
 
-          {/* ROLE PROTECTED ROUTES */}
           <Route
             path="/officer"
             element={
-              <RoleProtectedRoute allowedRoles={["officer", "admin"]}>
+              <RoleProtectedRoute
+                allowedRoles={["officer", "admin"]}
+              >
                 <OfficerArea />
               </RoleProtectedRoute>
             }
@@ -222,23 +269,30 @@ function SeaGuardLayout() {
           <Route
             path="/admin"
             element={
-              <RoleProtectedRoute allowedRoles={["admin"]}>
+              <RoleProtectedRoute
+                allowedRoles={["admin"]}
+              >
                 <AdminArea />
               </RoleProtectedRoute>
             }
           />
 
-          <Route path="/profile" element={<Profile />} />
+          <Route
+            path="/profile"
+            element={<Profile />}
+          />
 
           <Route
             path="*"
             element={<Navigate to="/dashboard" replace />}
           />
+
         </Routes>
       </main>
 
       {/* FOOTER */}
       <footer className="footer">
+
         <div>
           <strong>SeaGuard AI</strong>
           <span>
@@ -248,10 +302,12 @@ function SeaGuardLayout() {
         </div>
 
         <div className="system-status">
-          <span className="status-dot"></span>
+          <span className="status-dot" />
           Secure Session Active
         </div>
+
       </footer>
+
     </div>
   );
 }
