@@ -11,6 +11,7 @@ from fastapi import UploadFile
 from pypdf import PdfReader
 from bson import ObjectId
 from bson.errors import InvalidId
+from gridfs import GridFS
 
 from backend.database.mongodb import db
 from backend.utils.file_security import validate_uploaded_file
@@ -391,7 +392,8 @@ class DocumentService:
         incident_type: str,
         document_type: str,
         vessel_name=None,
-        owner_id=None
+        owner_id=None,
+        file_content: bytes | None = None
     ) -> str:
 
         if db is None:
@@ -399,6 +401,10 @@ class DocumentService:
             raise RuntimeError(
                 "Database connection "
                 "is not available."
+            )
+        if not owner_id:
+            raise ValueError(
+                "Authenticated user ID is required."
             )
 
         document = {
@@ -427,6 +433,22 @@ class DocumentService:
             document["owner_id"] = str(
                 owner_id
             )
+
+        # Store the original PDF securely in GridFS.
+        # Only PDFs need the embedded browser preview.
+        if document_type.upper() == "PDF" and file_content:
+            fs = GridFS(db)
+
+            file_id = fs.put(
+                file_content,
+                filename=filename,
+                content_type="application/pdf",
+                metadata={
+                    "owner_id": str(owner_id),
+                },
+            )
+
+            document["gridfs_file_id"] = file_id
 
         result = db.documents.insert_one(
             document
@@ -521,6 +543,9 @@ class DocumentService:
 
             "uploaded_at": document.get(
                 "uploaded_at"
+            ),
+            "preview_available": (
+                document.get("gridfs_file_id") is not None
             )
         }
 

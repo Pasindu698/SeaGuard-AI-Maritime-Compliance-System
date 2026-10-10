@@ -45,6 +45,13 @@ from backend.routes.auth import (
     require_role,
 )
 
+from pathlib import Path
+from fastapi.responses import FileResponse
+
+from backend.services.retrieval_service import (
+    retrieval_service,
+)
+
 
 # =====================================================
 # LOGGER CONFIGURATION
@@ -219,3 +226,82 @@ def check_incident_compliance(
                 "Unable to perform compliance assessment."
             ),
         )
+
+    # =====================================================
+# SECURE ORIGINAL DOCUMENT PREVIEW
+# =====================================================
+
+@router.get(
+    "/documents/{document_path:path}",
+    status_code=status.HTTP_200_OK,
+)
+def preview_knowledge_document(
+    document_path: str,
+    current_user=Depends(
+        require_role(*ALLOWED_COMPLIANCE_ROLES)
+    ),
+):
+    """
+    Securely preview original maritime knowledge
+    documents stored inside the knowledge_base folder.
+
+    Supported file types:
+    - PDF
+    - TXT
+
+    Requires JWT authentication and RBAC.
+    """
+
+    knowledge_base = (
+        retrieval_service.knowledge_base_path.resolve()
+    )
+
+    # Normalize Windows paths received from frontend.
+    normalized_path = document_path.replace("\\", "/")
+
+    requested_file = (
+        knowledge_base / normalized_path
+    ).resolve()
+
+    # Prevent path traversal outside knowledge_base.
+    if not requested_file.is_relative_to(knowledge_base):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Access to this document is forbidden.",
+        )
+
+    if not requested_file.is_file():
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Document not found.",
+        )
+
+    allowed_types = {
+        ".pdf": "application/pdf",
+        ".txt": "text/plain; charset=utf-8",
+    }
+
+    extension = requested_file.suffix.lower()
+
+    if extension not in allowed_types:
+        raise HTTPException(
+            status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
+            detail="Unsupported document type.",
+        )
+
+    logger.info(
+        "Knowledge document accessed by user=%s, document=%s",
+        current_user.get("username"),
+        requested_file.name,
+    )
+
+    return FileResponse(
+        path=str(requested_file),
+        media_type=allowed_types[extension],
+        filename=requested_file.name,
+        content_disposition_type="inline",
+        headers={
+            "Cache-Control": "no-store",
+            "X-Content-Type-Options": "nosniff",
+        },
+    )

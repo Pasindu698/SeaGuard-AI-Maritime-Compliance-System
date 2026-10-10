@@ -38,6 +38,7 @@ class CoordinatorRequest(BaseModel):
 # REGULATORY / KNOWLEDGE REFERENCE
 # =====================================
 
+
 class CoordinatorReference(BaseModel):
 
     filename: str
@@ -46,7 +47,17 @@ class CoordinatorReference(BaseModel):
 
     detected_incident: Optional[str] = None
 
-    hybrid_score: float
+    hybrid_score: float = 0.0
+
+    # Incident-specific summary extracted
+    # from the retrieved maritime document.
+    summary: str = ""
+
+    # Indicates that the summary uses
+    # source-grounded extractive summarization.
+    summary_type: str = "extractive"
+    evidence: str = ""
+
 
 
 # =====================================
