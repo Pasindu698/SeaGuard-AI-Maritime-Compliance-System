@@ -225,3 +225,53 @@ export async function getAuditLogs(limit = 100) {
 
   return handleResponse(response);
 }
+
+// ==========================================
+// ADMIN - CREATE OFFICER / ADMIN INVITATION
+// ==========================================
+
+export async function createUserInvitation(userData) {
+  return authenticatedRequest("/auth/admin/invitations", {
+    method: "POST",
+    body: JSON.stringify({
+      username: userData.username,
+      email: userData.email,
+      role: userData.role,
+    }),
+  });
+}
+
+// ==========================================
+// ADMIN - RESEND USER INVITATION
+// ==========================================
+
+export async function resendUserInvitation(username) {
+  return authenticatedRequest(
+    `/auth/admin/invitations/${encodeURIComponent(username)}/resend`,
+    {
+      method: "POST",
+    }
+  );
+}
+
+// ==========================================
+// PUBLIC - ACCEPT INVITATION
+// ==========================================
+
+export async function acceptUserInvitation(token, password) {
+  const response = await fetch(
+    `${API_BASE_URL}/auth/accept-invitation`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        token,
+        new_password: password,
+      }),
+    }
+  );
+
+  return handleResponse(response);
+}
