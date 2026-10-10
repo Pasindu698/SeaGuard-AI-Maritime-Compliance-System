@@ -700,6 +700,7 @@ class AuthService:
                 "role": user["role"],
 
                 "is_active": user.get("is_active", True),
+                "invitation_pending": user.get("invitation_pending", False),
 
                 "created_at": (
 
@@ -949,6 +950,8 @@ class AuthService:
 
                     "timestamp": 1,
 
+                    "invitation_pending": 1,
+
                 }
 
             )
@@ -968,5 +971,189 @@ class AuthService:
                 log["timestamp"] = log["timestamp"].isoformat()
 
         return logs
+
+        # ==========================================
+    # ADMIN - CREATE USER INVITATION
+    # ==========================================
+
+    def create_user_invitation(
+        self,
+        admin_username: str,
+        username: str,
+        email: str,
+        role: str
+    ):
+        if db is None:
+            raise RuntimeError("Database connection is not available.")
+
+        username = username.strip().lower()
+        email = email.strip().lower()
+
+        if role not in ("officer", "admin"):
+            raise ValueError("Only officer and admin invitations are allowed.")
+
+        if db.users.find_one({"username": username}):
+            raise ValueError("Username already exists.")
+
+        if db.users.find_one({"email": email}):
+            raise ValueError("Email already exists.")
+
+        raw_token = secrets.token_urlsafe(32)
+        token_hash = hashlib.sha256(
+            raw_token.encode("utf-8")
+        ).hexdigest()
+
+        now = datetime.now(timezone.utc)
+
+        # Pending users have no usable password until invitation acceptance.
+        user_document = {
+            "username": username,
+            "email": email,
+            "password_hash": None,
+            "role": role,
+            "is_active": False,
+            "invitation_pending": True,
+            "token_version": 0,
+            "created_at": now,
+            "created_by": admin_username,
+        }
+
+        result = db.users.insert_one(user_document)
+
+        try:
+            db.user_invitations.insert_one({
+                "user_id": result.inserted_id,
+                "token_hash": token_hash,
+                "expires_at": now + timedelta(hours=24),
+                "created_at": now,
+            })
+        except Exception:
+            db.users.delete_one({"_id": result.inserted_id})
+            raise
+
+        self.create_audit_log(
+            username=admin_username,
+            action=f"USER_INVITED:{username}:{role}"
+        )
+
+        # Token must only be used by the backend email service.
+        return {
+            "username": username,
+            "email": email,
+            "role": role,
+            "token": raw_token,
+        }
+
+    # ==========================================
+    # ADMIN - RESEND INVITATION
+    # ==========================================
+
+    def resend_user_invitation(
+        self,
+        admin_username: str,
+        username: str
+    ):
+        if db is None:
+            raise RuntimeError("Database connection is not available.")
+
+        username = username.strip().lower()
+
+        user = db.users.find_one({
+            "username": username,
+            "invitation_pending": True,
+            "is_active": False,
+        })
+
+        if not user:
+            raise ValueError("Pending invitation account not found.")
+
+        raw_token = secrets.token_urlsafe(32)
+        token_hash = hashlib.sha256(
+            raw_token.encode("utf-8")
+        ).hexdigest()
+
+        now = datetime.now(timezone.utc)
+
+        # Replace previous invitations with a new one.
+        db.user_invitations.delete_many({"user_id": user["_id"]})
+        db.user_invitations.insert_one({
+            "user_id": user["_id"],
+            "token_hash": token_hash,
+            "expires_at": now + timedelta(hours=24),
+            "created_at": now,
+        })
+
+        self.create_audit_log(
+            username=admin_username,
+            action=f"USER_INVITATION_RESENT:{username}"
+        )
+
+        return {
+            "username": user["username"],
+            "email": user["email"],
+            "role": user["role"],
+            "token": raw_token,
+        }
+
+    # ==========================================
+    # USER - ACCEPT INVITATION
+    # ==========================================
+
+    def accept_user_invitation(
+        self,
+        token: str,
+        new_password: str
+    ):
+        if db is None:
+            raise RuntimeError("Database connection is not available.")
+
+        if not validate_password(new_password):
+            raise ValueError("Password does not meet security requirements.")
+
+        token_hash = hashlib.sha256(
+            token.encode("utf-8")
+        ).hexdigest()
+
+        now = datetime.now(timezone.utc)
+
+        invitation = db.user_invitations.find_one_and_delete({
+            "token_hash": token_hash,
+            "expires_at": {"$gt": now},
+        })
+
+        if not invitation:
+            raise ValueError("Invalid or expired invitation link.")
+
+        result = db.users.update_one(
+            {
+                "_id": invitation["user_id"],
+                "invitation_pending": True,
+                "is_active": False,
+            },
+            {
+                "$set": {
+                    "password_hash": hash_password(new_password),
+                    "is_active": True,
+                    "invitation_pending": False,
+                    "password_changed_at": now,
+                },
+                "$inc": {"token_version": 1},
+            }
+        )
+
+        if result.matched_count != 1:
+            raise ValueError("Invitation could not be activated.")
+
+        user = db.users.find_one({"_id": invitation["user_id"]})
+
+        if user:
+            self.create_audit_log(
+                username=user["username"],
+                action="USER_INVITATION_ACCEPTED"
+            )
+
+        return {
+            "message": "Account activated successfully. You can now log in."
+        }
 
 auth_service = AuthService()

@@ -232,3 +232,46 @@ class UpdateUserRoleRequest(BaseModel):
 
 class UpdateUserStatusRequest(BaseModel):
     is_active: bool
+
+
+    # ==========================================
+# ADMIN - CREATE USER INVITATION
+# ==========================================
+
+class CreateUserInvitationRequest(BaseModel):
+    username: str = Field(min_length=3, max_length=50)
+    email: str = Field(min_length=5, max_length=100)
+    role: Literal["officer", "admin"]
+
+    @field_validator("username")
+    @classmethod
+    def validate_username(cls, value: str) -> str:
+        return UserRegister.validate_username(value)
+
+    @field_validator("email")
+    @classmethod
+    def validate_email(cls, value: str) -> str:
+        return UserRegister.validate_email(value)
+
+
+# ==========================================
+# USER - ACCEPT INVITATION
+# ==========================================
+
+class AcceptInvitationRequest(BaseModel):
+    token: str = Field(min_length=32, max_length=256)
+    new_password: str = Field(min_length=8, max_length=128)
+
+    @field_validator("new_password")
+    @classmethod
+    def validate_new_password(cls, value: str) -> str:
+        from backend.utils.security import validate_password
+
+        if not validate_password(value):
+            raise ValueError(
+                "Password must contain uppercase, lowercase, "
+                "number and special character, and be "
+                "8-72 UTF-8 bytes long."
+            )
+
+        return value

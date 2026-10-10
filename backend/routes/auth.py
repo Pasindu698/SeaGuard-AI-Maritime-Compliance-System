@@ -10,6 +10,8 @@ from fastapi.security import (
     HTTPBearer,
 )
 from backend.models.user import (
+    CreateUserInvitationRequest,
+    AcceptInvitationRequest,
     UserRegister,
     UserLogin,
     UserResponse,
@@ -348,3 +350,111 @@ def get_audit_logs(
             status_code=503,
             detail="Audit log service is temporarily unavailable."
         )
+
+
+# ==========================================
+# ADMIN - CREATE USER INVITATION
+# ==========================================
+
+@router.post("/admin/invitations", status_code=201)
+def create_user_invitation(
+    data: CreateUserInvitationRequest,
+    current_user=Depends(require_role("admin"))
+):
+    try:
+        invitation = auth_service.create_user_invitation(
+            admin_username=current_user["username"],
+            username=data.username,
+            email=data.email,
+            role=data.role
+        )
+
+        email_service.send_invitation_email(
+            recipient_email=invitation["email"],
+            username=invitation["username"],
+            role=invitation["role"],
+            token=invitation["token"]
+        )
+
+        return {
+            "message": "User invitation created and email sent.",
+            "username": invitation["username"],
+            "email": invitation["email"],
+            "role": invitation["role"]
+        }
+
+    except ValueError as error:
+        raise HTTPException(status_code=400, detail=str(error))
+
+    except RuntimeError:
+        raise HTTPException(
+            status_code=503,
+            detail="Unable to create or send invitation."
+        )
+
+
+# ==========================================
+# ADMIN - RESEND INVITATION
+# ==========================================
+
+@router.post("/admin/invitations/{username}/resend")
+def resend_user_invitation(
+    username: str,
+    current_user=Depends(require_role("admin"))
+):
+    try:
+        invitation = auth_service.resend_user_invitation(
+            admin_username=current_user["username"],
+            username=username
+        )
+
+        email_service.send_invitation_email(
+            recipient_email=invitation["email"],
+            username=invitation["username"],
+            role=invitation["role"],
+            token=invitation["token"]
+        )
+
+        return {
+            "message": "Invitation email resent successfully."
+        }
+
+    except ValueError as error:
+        raise HTTPException(status_code=400, detail=str(error))
+
+    except RuntimeError:
+        raise HTTPException(
+            status_code=503,
+            detail="Unable to resend invitation email."
+        )
+
+
+# ==========================================
+# USER - ACCEPT INVITATION
+# ==========================================
+
+@router.post("/accept-invitation")
+def accept_invitation(data: AcceptInvitationRequest):
+    try:
+        return auth_service.accept_user_invitation(
+            token=data.token,
+            new_password=data.new_password
+        )
+
+    except ValueError:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid or expired invitation, or invalid password."
+        )
+
+    except RuntimeError as error:
+        import logging
+
+        logging.getLogger(__name__).exception(
+            "Invitation email sending failed"
+        )
+
+        raise HTTPException(
+            status_code=503,
+            detail="Unable to create or send invitation."
+        ) from error

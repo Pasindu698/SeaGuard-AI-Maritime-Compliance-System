@@ -77,5 +77,84 @@ SeaGuard AI Security Team
 
         return True
 
+# ==========================================
+    # ADMIN - SEND ACCOUNT INVITATION EMAIL
+    # ==========================================
+
+    def send_invitation_email(
+        self,
+        recipient_email: str,
+        username: str,
+        role: str,
+        token: str
+    ):
+        if not self.smtp_email or not self.smtp_password:
+            raise RuntimeError(
+                "SMTP email configuration is missing."
+            )
+
+        invitation_link = (
+            f"{self.frontend_url}/accept-invitation"
+            f"?token={quote(token, safe='')}"
+        )
+
+        message = EmailMessage()
+        message["Subject"] = "SeaGuard AI - Account Invitation"
+        message["From"] = self.smtp_email
+        message["To"] = recipient_email
+
+        message.set_content(
+            f"""Hello {username},
+
+You have been invited to join SeaGuard AI.
+
+Your account details:
+
+Username: {username}
+Role: {role.capitalize()}
+
+To activate your account and create your password,
+please open the following link:
+
+{invitation_link}
+
+This invitation expires in 24 hours and can only be used once.
+
+For security reasons, your password is not sent by email.
+You must create your own password using the invitation link.
+
+If you were not expecting this invitation,
+please contact your system administrator.
+
+Best regards,
+SeaGuard AI Security Team
+"""
+        )
+
+        context = ssl.create_default_context()
+
+        try:
+            with smtplib.SMTP(
+                self.smtp_host,
+                self.smtp_port,
+                timeout=20
+            ) as server:
+                server.ehlo()
+                server.starttls(context=context)
+                server.ehlo()
+
+                server.login(
+                    self.smtp_email,
+                    self.smtp_password
+                )
+
+                server.send_message(message)
+
+        except (smtplib.SMTPException, OSError) as error:
+            raise RuntimeError(
+                "Unable to send account invitation email."
+            ) from error
+
+        return True
 
 email_service = EmailService()
