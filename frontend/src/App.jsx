@@ -7,6 +7,7 @@ import {
   Routes,
 } from "react-router-dom";
 
+import Home from "./pages/Home";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import OfficerArea from "./pages/auth/OfficerArea";
@@ -35,7 +36,8 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
-
+        {/* Home page route */}
+        <Route path="/" element={<Home />} />
         {/* Protected Application */}
         <Route
           path="/*"
