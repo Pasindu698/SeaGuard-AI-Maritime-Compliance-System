@@ -1,3 +1,8 @@
+
+/* =========================================
+   SEAGUARD AI - GLOBAL APPLICATION STYLES
+========================================= */
+
 #root {
   min-height: 100vh;
 }
@@ -8,50 +13,48 @@
   flex-direction: column;
 }
 
-/* =========================
+/* =========================================
    HEADER
-========================= */
+========================================= */
 
 .main-header {
   position: sticky;
   top: 0;
   z-index: 100;
 
-  background:
-    linear-gradient(
-      120deg,
-      rgba(5, 18, 40, 0.98),
-      rgba(7, 40, 68, 0.98)
-    );
+  background: linear-gradient(
+    120deg,
+    rgba(5, 18, 40, 0.98),
+    rgba(7, 40, 68, 0.98)
+  );
 
   border-bottom: 1px solid rgba(56, 189, 248, 0.18);
-
   box-shadow: 0 5px 25px rgba(2, 12, 27, 0.16);
-
   backdrop-filter: blur(14px);
 }
 
 .header-inner {
-  max-width: 1180px;
+  width: 100%;
+  max-width: 1600px;
   min-height: 78px;
   margin: 0 auto;
-  padding: 0 24px;
+  padding: 12px 24px;
 
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 30px;
+  gap: 20px;
 }
 
-/* =========================
+/* =========================================
    BRAND
-========================= */
+========================================= */
 
 .brand {
   display: flex;
   align-items: center;
   gap: 12px;
-
+  flex-shrink: 0;
   text-decoration: none;
   color: white;
 }
@@ -59,21 +62,12 @@
 .brand-icon {
   width: 44px;
   height: 44px;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   border-radius: 12px;
-
   font-size: 22px;
-
-  background: linear-gradient(
-    135deg,
-    #0ea5e9,
-    #06b6d4
-  );
-
+  background: linear-gradient(135deg, #0ea5e9, #06b6d4);
   box-shadow: 0 5px 18px rgba(14, 165, 233, 0.25);
 }
 
@@ -89,89 +83,75 @@
 
 .brand-subtitle {
   margin-top: 2px;
-
   font-size: 10px;
   letter-spacing: 0.7px;
   text-transform: uppercase;
-
   color: #8ca8c5;
 }
 
-/* =========================
+/* =========================================
    NAVIGATION
-========================= */
+========================================= */
 
 .main-nav {
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 5px;
 }
 
 .nav-link {
   display: flex;
   align-items: center;
-  gap: 8px;
-
-  padding: 11px 16px;
-
+  gap: 7px;
+  padding: 11px 12px;
   color: #b8cadc;
   text-decoration: none;
-
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
-
   border-radius: 10px;
-
   transition: 0.2s ease;
 }
 
 .nav-link:hover {
   color: white;
-
   background: rgba(255, 255, 255, 0.07);
 }
 
 .nav-link.active {
   color: white;
-
-  background:
-    linear-gradient(
-      135deg,
-      rgba(14, 165, 233, 0.25),
-      rgba(6, 182, 212, 0.13)
-    );
-
+  background: linear-gradient(
+    135deg,
+    rgba(14, 165, 233, 0.25),
+    rgba(6, 182, 212, 0.13)
+  );
   border: 1px solid rgba(56, 189, 248, 0.18);
 }
 
-/* =========================
-   MAIN
-========================= */
+/* =========================================
+   MAIN CONTENT
+========================================= */
 
-main {
+.app-main {
   flex: 1;
+  min-width: 0;
 }
 
-/* =========================
+/* =========================================
    FOOTER
-========================= */
+========================================= */
 
 .footer {
   min-height: 64px;
-
   padding: 18px 32px;
-
   display: flex;
   align-items: center;
   justify-content: space-between;
-
   gap: 20px;
-
   background: #07182c;
   color: #8fa9c3;
-
   font-size: 12px;
-
   border-top: 1px solid rgba(56, 189, 248, 0.15);
 }
 
@@ -183,57 +163,20 @@ main {
   display: flex;
   align-items: center;
   gap: 8px;
-
   color: #b7d4e9;
 }
 
 .status-dot {
   width: 8px;
   height: 8px;
-
   border-radius: 50%;
-
   background: #22c55e;
-
   box-shadow: 0 0 8px rgba(34, 197, 94, 0.8);
 }
 
-/* =========================
-   RESPONSIVE
-========================= */
-
-@media (max-width: 760px) {
-
-  .header-inner {
-    flex-direction: column;
-    align-items: flex-start;
-
-    padding-top: 15px;
-    padding-bottom: 15px;
-  }
-
-  .main-nav {
-    width: 100%;
-  }
-
-  .nav-link {
-    flex: 1;
-    justify-content: center;
-  }
-
-  .brand-subtitle {
-    display: none;
-  }
-
-  .footer {
-    flex-direction: column;
-    text-align: center;
-  }
-}
-
-/* =========================
-   AUTHENTICATED USER NAV
-========================= */
+/* =========================================
+   AUTHENTICATED USER
+========================================= */
 
 .user-nav {
   display: flex;
@@ -268,13 +211,10 @@ main {
   padding: 9px 13px;
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 9px;
-
   background: rgba(255, 255, 255, 0.07);
   color: #e2e8f0;
-
   font-size: 12px;
   font-weight: 600;
-
   cursor: pointer;
   transition: 0.2s ease;
 }
@@ -285,26 +225,9 @@ main {
   color: #fecaca;
 }
 
-@media (max-width: 900px) {
-  .user-nav {
-    width: 100%;
-    margin-left: 0;
-    padding-left: 0;
-    padding-top: 10px;
-
-    border-left: none;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-
-    justify-content: space-between;
-  }
-
-  .user-info {
-    text-align: left;
-  }
-}
-/* =========================
+/* =========================================
    RESET PASSWORD PAGE
-========================= */
+========================================= */
 
 .reset-page {
   min-height: calc(100vh - 145px);
@@ -398,10 +321,9 @@ main {
   text-decoration: none;
 }
 
-
-/* =========================
+/* =========================================
    RESET PASSWORD - EXTRA STYLING
-========================= */
+========================================= */
 
 .reset-brand {
   display: flex;
@@ -464,6 +386,64 @@ main {
 .reset-form input:focus-visible {
   outline: 2px solid #0284c7;
   outline-offset: 2px;
+}
+
+/* =========================================
+   RESPONSIVE DESIGN
+========================================= */
+
+@media (max-width: 1200px) {
+  .header-inner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .main-nav {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 900px) {
+  .user-nav {
+    margin-left: 0;
+    padding-left: 12px;
+  }
+}
+
+@media (max-width: 760px) {
+  .header-inner {
+    padding: 15px;
+  }
+
+  .main-nav {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .nav-link {
+    padding: 10px;
+    font-size: 12px;
+  }
+
+  .footer {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .user-nav {
+    width: 100%;
+    margin-left: 0;
+    padding-left: 0;
+    padding-top: 12px;
+    border-left: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    justify-content: space-between;
+  }
+
+  .user-info {
+    text-align: left;
+  }
 }
 
 @media (max-width: 480px) {
